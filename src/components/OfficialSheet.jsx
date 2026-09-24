@@ -390,10 +390,13 @@ export default function OfficialSheet({
           </div>
 
           {/* Lado Direito: Quadro de Informações do Personagem (2x3) */}
-          <div className="w-[500px] border-2 border-neutral-800 rounded-md p-2 bg-neutral-50 grid grid-cols-[1.3fr_1fr_1fr] grid-rows-2 gap-x-3 gap-y-1">
+          <div 
+            className="w-[500px] border-2 border-neutral-800 rounded-md p-2 bg-neutral-50 grid grid-rows-2 gap-x-3 gap-y-1"
+            style={{ gridTemplateColumns: "minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr)" }}
+          >
             {/* Classe e Nível Canônico com Espaço Completo */}
-            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5">
-              <div className="flex items-center justify-between gap-1.5 w-full">
+            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5 min-w-0">
+              <div className="flex items-center justify-between gap-1.5 w-full min-w-0">
                 <input
                   type="text"
                   value={character.className}
@@ -432,72 +435,72 @@ export default function OfficialSheet({
             </div>
 
             {/* Antecedente */}
-            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5">
+            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5 min-w-0">
               <input
                 type="text"
                 value={character.background}
                 onChange={(e) => setCharacter({ ...character, background: e.target.value })}
-                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate"
+                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none w-full min-w-0"
               />
               <span className="text-[7.5px] font-extrabold uppercase text-neutral-500">ANTECEDENTE</span>
             </div>
 
             {/* Nome do Jogador */}
-            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5">
+            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5 min-w-0">
               <input
                 type="text"
                 value={character.playerName}
                 onChange={(e) => setCharacter({ ...character, playerName: e.target.value })}
-                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate"
+                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none w-full min-w-0"
               />
               <span className="text-[7.5px] font-extrabold uppercase text-neutral-500">NOME DO JOGADOR</span>
             </div>
 
             {/* Raça */}
-            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5">
+            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5 min-w-0">
               <input
                 type="text"
                 value={character.race}
                 onChange={(e) => setCharacter({ ...character, race: e.target.value })}
-                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate"
+                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none w-full min-w-0"
               />
               <span className="text-[7.5px] font-extrabold uppercase text-neutral-500">RAÇA</span>
             </div>
 
             {/* Tendência */}
-            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5">
+            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5 min-w-0">
               <input
                 type="text"
                 value={character.alignment}
                 onChange={(e) => setCharacter({ ...character, alignment: e.target.value })}
-                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate"
+                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none w-full min-w-0"
               />
               <span className="text-[7.5px] font-extrabold uppercase text-neutral-500">TENDÊNCIA</span>
             </div>
 
             {/* Pontos de Experiência com Meta para o Próximo Nível */}
-            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5">
-              <div className="flex items-center justify-between gap-1">
+            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5 min-w-0">
+              <div className="flex items-center justify-between gap-1 w-full min-w-0">
                 <input
                   type="number"
                   value={character.xp}
                   onChange={(e) => setCharacter({ ...character, xp: parseInt(e.target.value, 10) || 0 })}
-                  className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate font-mono w-16"
+                  className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none font-mono min-w-0 flex-1"
                 />
-                <span className="text-[6.5px] text-neutral-400 font-mono truncate" title="Meta para o próximo nível">
+                <span className="text-[6.5px] text-neutral-400 font-mono shrink-0" title="Meta para o próximo nível">
                   / {getNextLevelXP(character.level).toLocaleString("pt-BR")} XP
                 </span>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-[7.5px] font-extrabold uppercase text-neutral-500">PONTOS DE EXPERIÊNCIA</span>
+              <div className="flex items-center justify-between min-w-0">
+                <span className="text-[7px] font-extrabold uppercase text-neutral-500 truncate">PONTOS DE EXPERIÊNCIA</span>
                 {character.xp >= getNextLevelXP(character.level) && (character.level || 1) < 20 && (
                   <button
                     type="button"
                     onClick={() => handleLevelChange((character.level || 1) + 1)}
-                    className="text-[6.5px] font-black text-amber-900 bg-amber-300 px-1 rounded shadow-xs hover:bg-amber-400 transition-colors animate-pulse"
+                    className="text-[6.5px] font-black text-amber-900 bg-amber-300 px-1 rounded shadow-xs hover:bg-amber-400 transition-colors animate-pulse shrink-0"
                     title="XP suficiente para subir de nível! Clique para avançar."
                   >
-                    ⭐ Subir p/ Nv {(character.level || 1) + 1}
+                    ⭐ Subir Nv
                   </button>
                 )}
               </div>
