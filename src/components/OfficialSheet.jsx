@@ -123,16 +123,16 @@ export default function OfficialSheet({
               </span>
             </div>
 
-            <div className="border-2 border-neutral-800 rounded-md px-3 py-1.5 bg-neutral-50 flex flex-col justify-center h-14">
+            <div className="border-2 border-neutral-800 rounded-md px-3 py-1 bg-neutral-50 flex flex-col justify-center h-14">
               <input
                 type="text"
                 value={character.name}
                 onChange={(e) => setCharacter({ ...character, name: e.target.value })}
                 placeholder="Nome do Personagem"
-                className="font-serif font-black text-xl tracking-wide bg-transparent border-none focus:outline-none w-full"
+                className="font-serif font-black text-base sm:text-lg tracking-wide bg-transparent border-none focus:outline-none w-full"
                 style={{ color: currentTheme.primaryDark || "#991b1b" }}
               />
-              <span className="text-[8px] font-extrabold uppercase text-neutral-500 tracking-wider">
+              <span className="text-[7.5px] font-extrabold uppercase text-neutral-500 tracking-wider">
                 NOME DO PERSONAGEM
               </span>
             </div>
