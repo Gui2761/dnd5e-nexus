@@ -80,13 +80,17 @@ export default function App() {
     }
   }, []);
 
-  // Salva no localStorage e atualiza título
+  // Salva no localStorage e atualiza título da aba do navegador
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("dnd5e_nexus_character_v3", JSON.stringify(character));
-      document.title = `${character.name || "Personagem"} — D&D 5e Oficial`;
+      if (currentScreen === "hub") {
+        document.title = "D&D 5e — Salão dos Heróis | Mesa Online";
+      } else {
+        document.title = "D&D 5e — Ficha de Personagem & Mesa Online";
+      }
     }
-  }, [character]);
+  }, [character, currentScreen]);
 
   const handleSave = () => {
     localStorage.setItem("dnd5e_nexus_character", JSON.stringify(character));
