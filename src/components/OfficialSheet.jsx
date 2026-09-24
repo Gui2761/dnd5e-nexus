@@ -342,12 +342,13 @@ export default function OfficialSheet({
                       </button>
 
                       {/* Bolha Oval do Valor Base */}
-                      <div className="border border-neutral-700 rounded-full px-2 py-0 bg-white w-9 flex items-center justify-center">
+                      <div className="border border-neutral-700 rounded-full px-1 py-0.5 bg-white w-10 flex items-center justify-center">
                         <input
-                          type="number"
+                          type="text"
+                          inputMode="numeric"
                           value={score}
                           onChange={(e) => handleScoreChange(ab.id, e.target.value)}
-                          className="w-full text-center font-bold text-[10px] bg-transparent border-none p-0 outline-none font-mono"
+                          className="w-full text-center font-bold text-[11px] leading-none bg-transparent border-none p-0 outline-none font-mono"
                         />
                       </div>
                     </div>
@@ -735,11 +736,12 @@ export default function OfficialSheet({
                     <div key={coin.key} className="border border-neutral-700 rounded p-0.5 text-center bg-white">
                       <span className="text-[6px] font-extrabold text-neutral-500 block leading-none">{coin.label}</span>
                       <input
-                        type="number"
+                        type="text"
+                        inputMode="numeric"
                         value={character.coins[coin.key] !== undefined && character.coins[coin.key] !== 0 ? character.coins[coin.key] : (character.coins[coin.key] === 0 ? "0" : "")}
                         placeholder="-"
                         onChange={(e) => handleCoinChange(coin.key, e.target.value)}
-                        className="w-full text-center font-bold text-[9px] bg-transparent focus:outline-none font-mono"
+                        className="w-full text-center font-bold text-[10px] leading-none bg-transparent focus:outline-none font-mono"
                       />
                     </div>
                   ))}
