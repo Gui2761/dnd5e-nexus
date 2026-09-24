@@ -1,8 +1,43 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { getAbilityModifier, formatModifier, getProficiencyBonus, ABILITIES, SKILLS } from "../utils/dndCalc";
 import { WEAPONS, CLASS_FEATURES_DB, SPELLS_DATABASE } from "../data/compendium";
-import CharacterArt from "./CharacterArt";
-import { Trash2, Plus, Sparkles, BookOpen } from "lucide-react";
+import { Trash2, Plus, Sparkles, BookOpen, Edit3, Check } from "lucide-react";
+
+// Helper para parser de Habilidades
+function parseFeatures(text) {
+  if (!text) return [];
+  const blocks = text.split(/(?:^|\n)•\s+/).filter(b => b.trim());
+  return blocks.map((block, idx) => {
+    const lines = block.trim().split("\n");
+    const firstLine = lines[0] || "";
+    const desc = lines.slice(1).join("\n").trim();
+    const match = firstLine.match(/^(.*?)(?:\s*\((.*?)\))?$/);
+    return {
+      id: "feat-" + idx,
+      title: match ? match[1].trim() : firstLine,
+      tag: match && match[2] ? match[2].trim() : "",
+      desc: desc || ""
+    };
+  });
+}
+
+function serializeFeatures(items) {
+  return items.map(f => `• ${f.title}${f.tag ? ` (${f.tag})` : ""}\n${f.desc}`).join("\n\n");
+}
+
+// Helper para parser de Equipamento
+function parseEquipment(text) {
+  if (!text) return [];
+  const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+  return lines.map((line, idx) => ({
+    id: "eq-" + idx,
+    text: line.replace(/^[•\-\*]\s*/, "")
+  }));
+}
+
+function serializeEquipment(items) {
+  return items.map(e => `• ${e.text}`).join("\n");
+}
 
 export default function OfficialSheet({
   character,
@@ -16,6 +51,54 @@ export default function OfficialSheet({
   const [activeWeaponSearchRowId, setActiveWeaponSearchRowId] = useState(null);
   const [featureSearchQuery, setFeatureSearchQuery] = useState("");
   const [showFeatureDropdown, setShowFeatureDropdown] = useState(false);
+  const [isEditingEquipmentText, setIsEditingEquipmentText] = useState(false);
+  const [isEditingProficienciesText, setIsEditingProficienciesText] = useState(false);
+  const [isEditingFeaturesText, setIsEditingFeaturesText] = useState(false);
+
+  const parsedFeaturesList = useMemo(() => {
+    return parseFeatures(character.featuresText);
+  }, [character.featuresText]);
+
+  const parsedEquipList = useMemo(() => {
+    return parseEquipment(character.equipmentText);
+  }, [character.equipmentText]);
+
+  const parsedProfList = useMemo(() => {
+    if (!character.otherProficiencies) return [];
+    return character.otherProficiencies
+      .split("\n\n")
+      .map(b => b.trim())
+      .filter(Boolean)
+      .map((block, idx) => {
+        const colonIdx = block.indexOf(":");
+        if (colonIdx !== -1) {
+          const cat = block.slice(0, colonIdx).trim();
+          const items = block.slice(colonIdx + 1).split(/[,;.]/).map(s => s.trim()).filter(Boolean);
+          return { id: "cat-" + idx, title: cat, items, raw: block };
+        }
+        return { id: "cat-" + idx, title: "Geral", items: [block], raw: block };
+      });
+  }, [character.otherProficiencies]);
+
+  const handleDeleteFeature = (idxToDelete) => {
+    const next = parsedFeaturesList.filter((_, idx) => idx !== idxToDelete);
+    setCharacter(prev => ({ ...prev, featuresText: serializeFeatures(next) }));
+  };
+
+  const handleAddCustomFeature = () => {
+    const next = [...parsedFeaturesList, { id: "feat-" + Date.now(), title: "Nova Habilidade", tag: "Personalizada", desc: "Descreva os efeitos e regras desta habilidade." }];
+    setCharacter(prev => ({ ...prev, featuresText: serializeFeatures(next) }));
+  };
+
+  const handleDeleteEquipItem = (idxToDelete) => {
+    const next = parsedEquipList.filter((_, idx) => idx !== idxToDelete);
+    setCharacter(prev => ({ ...prev, equipmentText: serializeEquipment(next) }));
+  };
+
+  const handleAddEquipItem = () => {
+    const next = [...parsedEquipList, { id: "eq-" + Date.now(), text: "Novo Item (1x)" }];
+    setCharacter(prev => ({ ...prev, equipmentText: serializeEquipment(next) }));
+  };
 
   // Manipuladores de Atributos
   const handleScoreChange = (abId, val) => {
@@ -303,11 +386,6 @@ export default function OfficialSheet({
         </div>
 
         {/* ============================================================ */}
-        {/* BRASÃO COMBINADO: RAÇA + CLASSE (PALADINO MEIO-ORC HEROICO) */}
-        {/* ============================================================ */}
-        <CharacterArt className={character.className} race={character.race} />
-
-        {/* ============================================================ */}
         {/* CORPO DA FICHA: 3 COLUNAS OFICIAIS COM NÚMEROS RETOS E ALINHADOS */}
         {/* ============================================================ */}
         <div className="grid grid-cols-[246px_260px_260px] gap-3">
@@ -459,15 +537,49 @@ export default function OfficialSheet({
             </div>
 
             {/* Idiomas e Outras Proficiências */}
-            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex-1 flex flex-col justify-between min-h-[140px]">
-              <textarea
-                value={character.otherProficiencies}
-                onChange={(e) => setCharacter({ ...character, otherProficiencies: e.target.value })}
-                rows={7}
-                className="w-full text-[8.5px] leading-relaxed bg-transparent border-none focus:outline-none resize-none font-sans"
-              />
-              <div className="text-[7.5px] font-extrabold uppercase text-center text-neutral-500 border-t border-neutral-300 pt-0.5 tracking-wider">
-                IDIOMAS E OUTRAS PROFICIÊNCIAS
+            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex flex-col justify-between h-auto min-h-[140px]">
+              <div className="space-y-1.5 mb-1 text-left">
+                {isEditingProficienciesText ? (
+                  <textarea
+                    value={character.otherProficiencies}
+                    onChange={(e) => setCharacter({ ...character, otherProficiencies: e.target.value })}
+                    rows={6}
+                    className="w-full text-[8px] leading-relaxed bg-white p-1.5 rounded border border-neutral-300 focus:outline-none font-sans"
+                  />
+                ) : (
+                  <div className="space-y-1.5">
+                    {parsedProfList.map((cat) => (
+                      <div key={cat.id} className="p-1 rounded bg-white border border-neutral-200 shadow-sm">
+                        <span className="text-[6.5px] font-black uppercase text-amber-800 tracking-wider block mb-0.5">
+                          {cat.title}
+                        </span>
+                        <div className="flex flex-wrap gap-1">
+                          {cat.items.map((it, i) => (
+                            <span 
+                              key={i} 
+                              className="text-[7px] font-semibold bg-neutral-100 text-neutral-800 px-1.5 py-0.2 rounded border border-neutral-300"
+                            >
+                              {it}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between border-t border-neutral-300 pt-0.5 mt-1">
+                <button
+                  type="button"
+                  onClick={() => setIsEditingProficienciesText(!isEditingProficienciesText)}
+                  className="text-[7px] text-amber-700 hover:underline font-bold flex items-center gap-0.5"
+                >
+                  <Edit3 size={8} /> {isEditingProficienciesText ? "Ver Banners" : "Editar"}
+                </button>
+                <span className="text-[7px] font-extrabold uppercase text-neutral-500 tracking-wider">
+                  IDIOMAS E PROFICIÊNCIAS
+                </span>
               </div>
             </div>
 
@@ -483,7 +595,8 @@ export default function OfficialSheet({
               {/* Classe de Armadura */}
               <div className="border-2 border-neutral-800 rounded-lg p-1 bg-neutral-50 text-center flex flex-col items-center justify-center h-14">
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   value={character.armorClass}
                   onChange={(e) => setCharacter({ ...character, armorClass: parseInt(e.target.value, 10) || 10 })}
                   className="font-black text-xl text-center bg-transparent w-full focus:outline-none leading-none font-mono"
@@ -525,18 +638,38 @@ export default function OfficialSheet({
               <div className="flex justify-end items-center gap-1 text-[8px] text-neutral-600 border-b border-neutral-300 pb-0.5">
                 <span>Pontos de Vida Máximos:</span>
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   value={character.hpMax}
                   onChange={(e) => setCharacter({ ...character, hpMax: parseInt(e.target.value, 10) || 1 })}
                   className="w-8 font-bold text-neutral-900 bg-transparent text-right focus:outline-none font-mono"
                 />
               </div>
-              <input
-                type="number"
-                value={character.hpCurrent}
-                onChange={(e) => setCharacter({ ...character, hpCurrent: parseInt(e.target.value, 10) || 0 })}
-                className="font-black text-3xl text-center py-1 text-emerald-800 bg-transparent focus:outline-none font-mono"
-              />
+              <div className="flex items-center justify-center gap-2 py-1">
+                <button 
+                  type="button"
+                  onClick={() => setCharacter(p => ({ ...p, hpCurrent: Math.max(0, p.hpCurrent - 1) }))}
+                  className="w-5 h-5 rounded-full bg-red-100 hover:bg-red-200 text-red-700 text-xs font-black flex items-center justify-center transition-all select-none shadow-sm"
+                  title="-1 PV"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={character.hpCurrent}
+                  onChange={(e) => setCharacter({ ...character, hpCurrent: parseInt(e.target.value, 10) || 0 })}
+                  className="font-black text-3xl text-center text-emerald-800 bg-transparent focus:outline-none font-mono w-14"
+                />
+                <button 
+                  type="button"
+                  onClick={() => setCharacter(p => ({ ...p, hpCurrent: Math.min(p.hpMax, p.hpCurrent + 1) }))}
+                  className="w-5 h-5 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-black flex items-center justify-center transition-all select-none shadow-sm"
+                  title="+1 PV"
+                >
+                  +
+                </button>
+              </div>
               <span className="text-[7.5px] font-extrabold uppercase text-center text-neutral-500 tracking-wider">
                 PONTOS DE VIDA ATUAIS
               </span>
@@ -545,7 +678,8 @@ export default function OfficialSheet({
             {/* Pontos de Vida Temporários */}
             <div className="border-[1.5px] border-neutral-800 rounded-lg p-1 bg-neutral-50 text-center">
               <input
-                type="number"
+                type="text"
+                inputMode="numeric"
                 value={character.hpTemp || ""}
                 placeholder="—"
                 onChange={(e) => setCharacter({ ...character, hpTemp: parseInt(e.target.value, 10) || 0 })}
@@ -721,9 +855,9 @@ export default function OfficialSheet({
               </div>
             </div>
 
-            {/* Equipamento & Moedas (Sincronizado) */}
-            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex-1 flex flex-col justify-between min-h-[170px]">
-              <div className="flex gap-2 h-full">
+            {/* Equipamento & Moedas (Sincronizado & Banners) */}
+            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex flex-col justify-between h-auto min-h-[170px]">
+              <div className="flex gap-2">
                 {/* Coluna de Moedas */}
                 <div className="w-10 flex flex-col gap-1">
                   {[
@@ -747,18 +881,77 @@ export default function OfficialSheet({
                   ))}
                 </div>
 
-                {/* Lista de Equipamentos */}
-                <div className="flex-1">
-                  <textarea
-                    value={character.equipmentText}
-                    onChange={(e) => setCharacter({ ...character, equipmentText: e.target.value })}
-                    rows={8}
-                    className="w-full text-[8px] leading-relaxed bg-transparent border-none focus:outline-none resize-none font-sans"
-                  />
+                {/* Lista de Equipamentos em Banners */}
+                <div className="flex-1 flex flex-col justify-between">
+                  {isEditingEquipmentText ? (
+                    <textarea
+                      value={character.equipmentText}
+                      onChange={(e) => setCharacter({ ...character, equipmentText: e.target.value })}
+                      rows={8}
+                      className="w-full text-[8px] leading-relaxed bg-white p-1 rounded border border-neutral-300 focus:outline-none font-sans"
+                    />
+                  ) : (
+                    <div className="space-y-1 mb-1 text-left">
+                      {parsedEquipList.map((item, idx) => {
+                        const t = item.text.toLowerCase();
+                        const isRiches = t.includes("riqueza") || t.includes("po");
+                        const isArmor = t.includes("armadura") || t.includes("malha") || t.includes("escudo");
+                        const isWeapon = t.includes("machado") || t.includes("espada") || t.includes("azagaia") || t.includes("arco");
+                        const isHoly = t.includes("símbolo") || t.includes("amuleto");
+
+                        return (
+                          <div 
+                            key={item.id || idx}
+                            className={`flex items-center justify-between gap-1 p-1 rounded border text-[7.5px] leading-tight text-neutral-800 transition-all ${
+                              isRiches ? "bg-amber-100/70 border-amber-300 font-bold" :
+                              isArmor ? "bg-slate-100 border-slate-300 font-semibold" :
+                              isWeapon ? "bg-red-50/70 border-red-200" :
+                              isHoly ? "bg-yellow-50/80 border-yellow-200" :
+                              "bg-white border-neutral-200"
+                            }`}
+                          >
+                            <div className="flex items-center gap-1 min-w-0 flex-1">
+                              <span className="text-[8.5px] select-none">
+                                {isRiches ? "🪙" : isArmor ? "🛡️" : isWeapon ? "⚔️" : isHoly ? "☀️" : "🎒"}
+                              </span>
+                              <span className="truncate">{item.text}</span>
+                            </div>
+                            {!isRiches && (
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteEquipItem(idx)}
+                                className="text-neutral-400 hover:text-red-600 transition-colors p-0.5"
+                                title="Remover item"
+                              >
+                                <Trash2 size={8} />
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between border-t border-neutral-200 pt-1 mt-1">
+                    <button
+                      type="button"
+                      onClick={handleAddEquipItem}
+                      className="text-[7px] text-amber-700 hover:underline font-bold flex items-center gap-0.5"
+                    >
+                      <Plus size={8} /> Adicionar Item
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingEquipmentText(!isEditingEquipmentText)}
+                      className="text-[7px] text-neutral-500 hover:text-neutral-800 flex items-center gap-0.5"
+                    >
+                      <Edit3 size={8} /> {isEditingEquipmentText ? "Ver Banners" : "Texto"}
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <div className="text-[7.5px] font-extrabold uppercase text-center text-neutral-500 border-t border-neutral-300 pt-0.5 tracking-wider">
+              <div className="text-[7.5px] font-extrabold uppercase text-center text-neutral-500 border-t border-neutral-300 pt-0.5 tracking-wider mt-1">
                 EQUIPAMENTO
               </div>
             </div>
@@ -835,7 +1028,7 @@ export default function OfficialSheet({
             </div>
 
             {/* Características e Habilidades com Busca do Livro */}
-            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex-1 flex flex-col justify-between min-h-[300px] relative">
+            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex flex-col justify-between h-auto min-h-[300px] overflow-visible relative">
               {/* Barra de Busca de Regras para Inserção Instantânea */}
               <div className="mb-1.5 relative">
                 <div className="flex items-center gap-1 bg-white border border-neutral-300 rounded px-1.5 py-0.5">
@@ -870,14 +1063,67 @@ export default function OfficialSheet({
                 )}
               </div>
 
-              <textarea
-                value={character.featuresText}
-                onChange={(e) => setCharacter({ ...character, featuresText: e.target.value })}
-                rows={16}
-                className="w-full text-[8px] leading-relaxed bg-transparent border-none focus:outline-none resize-none font-sans"
-              />
-              
-              <div className="text-[7.5px] font-extrabold uppercase text-center text-neutral-500 border-t border-neutral-300 pt-0.5 tracking-wider">
+              {isEditingFeaturesText ? (
+                <textarea
+                  value={character.featuresText}
+                  onChange={(e) => setCharacter({ ...character, featuresText: e.target.value })}
+                  rows={14}
+                  className="w-full text-[8px] leading-relaxed bg-white p-1.5 rounded border border-neutral-300 focus:outline-none font-sans mb-1"
+                />
+              ) : (
+                <div className="space-y-1.5 mb-2 text-left">
+                  {parsedFeaturesList.map((f, idx) => (
+                    <div 
+                      key={f.id || idx}
+                      className="rounded-lg border border-neutral-300 bg-gradient-to-r from-amber-50/80 to-white p-1.5 shadow-sm hover:border-amber-400 transition-all"
+                    >
+                      <div className="flex items-center justify-between border-b border-neutral-200/80 pb-0.5 mb-1">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[9px]">✨</span>
+                          <span className="font-serif font-black text-[8.5px] text-neutral-900 tracking-wide">
+                            {f.title}
+                          </span>
+                          {f.tag && (
+                            <span className="text-[6.5px] px-1.5 py-0.2 rounded-full font-bold uppercase tracking-wider bg-amber-200/70 text-amber-950 border border-amber-300/80">
+                              {f.tag}
+                            </span>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteFeature(idx)}
+                          className="text-neutral-400 hover:text-red-600 transition-colors p-0.5"
+                          title="Excluir habilidade"
+                        >
+                          <Trash2 size={9} />
+                        </button>
+                      </div>
+                      <p className="text-[7.5px] leading-relaxed text-neutral-700 whitespace-pre-line font-sans">
+                        {f.desc}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex items-center justify-between border-t border-neutral-300 pt-1 mt-1">
+                <button
+                  type="button"
+                  onClick={handleAddCustomFeature}
+                  className="text-[7.5px] text-amber-700 hover:underline font-bold flex items-center gap-0.5"
+                >
+                  <Plus size={9} /> Nova Habilidade
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditingFeaturesText(!isEditingFeaturesText)}
+                  className="text-[7px] text-neutral-500 hover:text-neutral-800 flex items-center gap-0.5"
+                >
+                  <Edit3 size={8} /> {isEditingFeaturesText ? "Ver Banners" : "Texto Livre"}
+                </button>
+              </div>
+
+              <div className="text-[7.5px] font-extrabold uppercase text-center text-neutral-500 border-t border-neutral-300 pt-0.5 mt-1 tracking-wider">
                 CARACTERÍSTICAS E HABILIDADES
               </div>
             </div>

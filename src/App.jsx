@@ -1,10 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import OfficialSheet from "./components/OfficialSheet";
-import CombatTab from "./components/CombatTab";
-import StatsTab from "./components/StatsTab";
-import SpellsTab from "./components/SpellsTab";
-import InventoryTab from "./components/InventoryTab";
-import BioTab from "./components/BioTab";
+import RaceFlank from "./components/RaceFlank";
+import ClassFlank from "./components/ClassFlank";
 import CompendiumModal from "./components/CompendiumModal";
 import DiceRoller from "./components/DiceRoller";
 import ShareModal from "./components/ShareModal";
@@ -13,8 +10,8 @@ import { DEFAULT_CHARACTER } from "./data/initialCharacter";
 import { getThemeForClass } from "./utils/theme";
 import { decompressCharacterFromUrl } from "./utils/sync";
 import { 
-  BookOpen, Dices, Smartphone, Save, Printer, ZoomIn, ZoomOut, Maximize2, 
-  Check, Layout, Smartphone as PhoneIcon, Users, Cloud 
+  BookOpen, Dices, Save, Printer, ZoomIn, ZoomOut, Maximize2, 
+  Check, Users 
 } from "lucide-react";
 
 export default function App() {
@@ -140,30 +137,6 @@ export default function App() {
               </select>
             </div>
 
-            {/* Alternador de Modo: Ficha Oficial vs Modo Tático */}
-            <div className="flex rounded-xl bg-white/5 p-0.5 border border-white/10 text-xs">
-              <button
-                onClick={() => setViewMode("official")}
-                className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all ${
-                  viewMode === "official" ? "bg-white/20 text-white shadow" : "text-white/50 hover:text-white"
-                }`}
-                title="Ver no modelo oficial impresso D&D 5e"
-              >
-                <Layout size={13} />
-                <span className="hidden sm:inline">Ficha Oficial 5e</span>
-              </button>
-              <button
-                onClick={() => setViewMode("tactical")}
-                className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1 transition-all ${
-                  viewMode === "tactical" ? "bg-white/20 text-white shadow" : "text-white/50 hover:text-white"
-                }`}
-                title="Modo Tático com botões grandes para combate"
-              >
-                <PhoneIcon size={13} />
-                <span className="hidden sm:inline">Modo Tático</span>
-              </button>
-            </div>
-
             {/* Botão de Restaurar Ficha do Thokk */}
             <button
               onClick={() => {
@@ -239,16 +212,6 @@ export default function App() {
             </button>
 
             <button
-              onClick={() => setIsShareModalOpen(true)}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow flex items-center gap-1.5 active:scale-95 text-black"
-              style={{ backgroundColor: currentTheme.primary }}
-              title="Gerar QR Code para abrir no celular de amigos"
-            >
-              <Smartphone size={14} />
-              <span>Conectar Celular</span>
-            </button>
-
-            <button
               onClick={() => window.print()}
               className="p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all border border-white/10 hidden sm:block"
               title="Imprimir / Salvar PDF"
@@ -269,85 +232,25 @@ export default function App() {
       </header>
 
       {/* ============================================================ */}
-      {/* CONTEÚDO PRINCIPAL: FICHA OFICIAL OU MODO TÁTICO */}
+      {/* CONTEÚDO PRINCIPAL: FLANCO ESQUERDO + FICHA OFICIAL + FLANCO DIREITO */}
       {/* ============================================================ */}
-      <main className="p-2 sm:p-4 overflow-x-auto flex justify-center">
-        {viewMode === "official" ? (
-          <div className="py-2">
-            <OfficialSheet 
-              character={character}
-              setCharacter={setCharacter}
-              currentTheme={currentTheme}
-              onQuickRoll={handleQuickRoll}
-              zoomScale={zoomScale}
-            />
-          </div>
-        ) : (
-          <div className="w-full max-w-4xl space-y-4">
-            {/* Navegador de Abas Táticas */}
-            <div className="flex gap-2 p-1.5 rounded-2xl bg-black/40 border border-white/10">
-              {[
-                { id: "combat", label: "Combate & PV" },
-                { id: "stats", label: "Atributos & Perícias" },
-                { id: "spells", label: "Grimório de Magias" },
-                { id: "inventory", label: "Inventário" },
-                { id: "bio", label: "Biografia & Traços" }
-              ].map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setTacticalTab(tab.id)}
-                  className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs transition-all ${
-                    tacticalTab === tab.id ? "bg-white text-black shadow" : "text-white/60 hover:text-white"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
+      <main className="p-2 sm:p-4 overflow-x-auto flex justify-center items-start gap-4 xl:gap-8">
+        {/* Flanco Esquerdo: Raça & Linhagem Ancestral */}
+        <RaceFlank race={character.race} />
 
-            {tacticalTab === "combat" && (
-              <CombatTab 
-                character={character}
-                setCharacter={setCharacter}
-                currentTheme={currentTheme}
-                onOpenCompendium={() => setIsCompendiumOpen(true)}
-                onQuickRoll={handleQuickRoll}
-              />
-            )}
-            {tacticalTab === "stats" && (
-              <StatsTab 
-                character={character}
-                setCharacter={setCharacter}
-                currentTheme={currentTheme}
-                onQuickRoll={handleQuickRoll}
-              />
-            )}
-            {tacticalTab === "spells" && (
-              <SpellsTab 
-                character={character}
-                setCharacter={setCharacter}
-                currentTheme={currentTheme}
-                onOpenCompendium={() => setIsCompendiumOpen(true)}
-                onQuickRoll={handleQuickRoll}
-              />
-            )}
-            {tacticalTab === "inventory" && (
-              <InventoryTab 
-                character={character}
-                setCharacter={setCharacter}
-                currentTheme={currentTheme}
-                onOpenCompendium={() => setIsCompendiumOpen(true)}
-              />
-            )}
-            {tacticalTab === "bio" && (
-              <BioTab 
-                character={character}
-                setCharacter={setCharacter}
-                currentTheme={currentTheme}
-              />
-            )}
-          </div>
-        )}
+        {/* Ficha Oficial D&D 5e Centralizada */}
+        <div className="py-2 flex-shrink-0">
+          <OfficialSheet 
+            character={character}
+            setCharacter={setCharacter}
+            currentTheme={currentTheme}
+            onQuickRoll={handleQuickRoll}
+            zoomScale={zoomScale}
+          />
+        </div>
+
+        {/* Flanco Direito: Classe & Ordem Sagrada */}
+        <ClassFlank className={character.className} character={character} />
       </main>
 
       {/* Notificação Flutuante de Rolagem Rápida */}
