@@ -1044,10 +1044,10 @@ export default function OfficialSheet({
             {/* Traços de Personalidade */}
             <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 min-h-[62px] flex flex-col justify-between">
               <textarea
-                value={character.personality.traits}
+                value={character.personality?.traits || ""}
                 onChange={(e) => setCharacter({
                   ...character,
-                  personality: { ...character.personality, traits: e.target.value }
+                  personality: { ...(character.personality || {}), traits: e.target.value }
                 })}
                 rows={2}
                 className="w-full text-[8px] italic leading-tight bg-transparent border-none focus:outline-none resize-none"
@@ -1060,10 +1060,10 @@ export default function OfficialSheet({
             {/* Ideais */}
             <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 min-h-[62px] flex flex-col justify-between">
               <textarea
-                value={character.personality.ideals}
+                value={character.personality?.ideals || ""}
                 onChange={(e) => setCharacter({
                   ...character,
-                  personality: { ...character.personality, ideals: e.target.value }
+                  personality: { ...(character.personality || {}), ideals: e.target.value }
                 })}
                 rows={2}
                 className="w-full text-[8px] italic leading-tight bg-transparent border-none focus:outline-none resize-none"
@@ -1076,10 +1076,10 @@ export default function OfficialSheet({
             {/* Vínculos */}
             <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 min-h-[62px] flex flex-col justify-between">
               <textarea
-                value={character.personality.bonds}
+                value={character.personality?.bonds || ""}
                 onChange={(e) => setCharacter({
                   ...character,
-                  personality: { ...character.personality, bonds: e.target.value }
+                  personality: { ...(character.personality || {}), bonds: e.target.value }
                 })}
                 rows={2}
                 className="w-full text-[8px] italic leading-tight bg-transparent border-none focus:outline-none resize-none"
@@ -1092,10 +1092,10 @@ export default function OfficialSheet({
             {/* Defeitos */}
             <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 min-h-[62px] flex flex-col justify-between">
               <textarea
-                value={character.personality.flaws}
+                value={character.personality?.flaws || ""}
                 onChange={(e) => setCharacter({
                   ...character,
-                  personality: { ...character.personality, flaws: e.target.value }
+                  personality: { ...(character.personality || {}), flaws: e.target.value }
                 })}
                 rows={2}
                 className="w-full text-[8px] italic leading-tight bg-transparent border-none focus:outline-none resize-none"

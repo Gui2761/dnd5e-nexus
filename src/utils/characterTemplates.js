@@ -597,10 +597,12 @@ export function createCleanCharacter({ name, race = "Humano", className = "Guerr
     featuresText: featuresText.trim(),
 
     // Campos de personalidade começam em branco para o jogador personalizar
-    personalityTraits: "",
-    ideals: "",
-    bonds: "",
-    flaws: "",
+    personality: {
+      traits: "",
+      ideals: "",
+      bonds: "",
+      flaws: ""
+    },
 
     spellcasting: {
       spellClass: className,
