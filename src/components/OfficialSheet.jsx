@@ -752,102 +752,127 @@ export default function OfficialSheet({
               </div>
             </div>
 
-            {/* Tabela de Ataques e Magias com Autocompletar e Excluir */}
-            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex flex-col justify-between min-h-[185px] relative">
-              <div>
-                <table className="w-full text-left border-collapse text-[8.5px]">
-                  <thead>
-                    <tr className="border-b border-neutral-400 text-[7px] font-extrabold uppercase text-neutral-600">
-                      <th className="py-0.5 w-[42%]">NOME</th>
-                      <th className="py-0.5 w-[18%] text-center">ATAQUE</th>
-                      <th className="py-0.5 w-[32%]">DANO / TIPO</th>
-                      <th className="py-0.5 w-[8%] text-right"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {character.attacks.map(atk => (
-                      <tr key={atk.id} className="border-b border-neutral-200 group">
-                        <td className="py-0.5 relative">
-                          <input
-                            type="text"
-                            value={atk.name}
-                            onChange={(e) => {
-                              handleAttackChange(atk.id, "name", e.target.value);
-                              setWeaponSearchQuery(e.target.value);
-                              setActiveWeaponSearchRowId(atk.id);
-                            }}
-                            onFocus={() => {
-                              setWeaponSearchQuery(atk.name);
-                              setActiveWeaponSearchRowId(atk.id);
-                            }}
-                            className="w-full font-bold text-neutral-900 bg-transparent focus:outline-none"
-                          />
-                          {/* Dropdown de sugestão do Livro enquanto digita */}
-                          {activeWeaponSearchRowId === atk.id && filteredWeapons.length > 0 && (
-                            <div className="absolute left-0 top-full mt-0.5 bg-neutral-900 text-white rounded-md shadow-xl border border-amber-400 z-30 p-1 w-48 text-[8px]">
-                              <span className="text-[6.5px] text-amber-300 font-bold block mb-0.5 uppercase">Sugestões do Livro:</span>
-                              {filteredWeapons.map((wpn, idx) => (
-                                <div
-                                  key={idx}
-                                  onClick={() => handleSelectWeaponForAttack(atk.id, wpn)}
-                                  className="p-1 hover:bg-neutral-800 cursor-pointer rounded flex justify-between items-center"
-                                >
-                                  <span className="font-bold">{wpn.name}</span>
-                                  <span className="text-red-300 font-mono">{wpn.damage}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </td>
-                        <td className="py-0.5 text-center">
-                          <button
-                            onClick={() => onQuickRoll(atk.name, 20, parseInt(atk.bonus, 10) || 0)}
-                            className="font-bold text-red-700 bg-transparent focus:outline-none font-mono hover:underline"
-                          >
-                            {atk.bonus}
-                          </button>
-                        </td>
-                        <td className="py-0.5">
-                          <input
-                            type="text"
-                            value={atk.damage}
-                            onChange={(e) => handleAttackChange(atk.id, "damage", e.target.value)}
-                            className="w-full text-neutral-800 bg-transparent focus:outline-none"
-                          />
-                        </td>
-                        {/* Botão de Excluir Ataque (🗑️) */}
-                        <td className="py-0.5 text-right">
+            {/* Tabela de Ataques e Magias com Banners Estilizados */}
+            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex flex-col justify-between h-auto min-h-[185px] overflow-visible relative">
+              <div className="w-full min-w-0">
+                {/* Autocomplete de Armas do Livro */}
+                {activeWeaponSearchRowId && filteredWeapons.length > 0 && (
+                  <div className="absolute left-2 right-2 top-10 bg-neutral-900 text-white rounded-xl shadow-2xl border border-amber-400 z-30 p-1.5 text-[8px] max-h-44 overflow-y-auto">
+                    <span className="text-[6.5px] text-amber-300 font-bold block mb-1 uppercase tracking-wider">
+                      Sugestões do Livro de Regras:
+                    </span>
+                    {filteredWeapons.map((wpn, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => handleSelectWeaponForAttack(activeWeaponSearchRowId, wpn)}
+                        className="p-1 hover:bg-neutral-800 cursor-pointer rounded flex justify-between items-center"
+                      >
+                        <span className="font-bold text-amber-200">{wpn.name}</span>
+                        <span className="text-red-300 font-mono">{wpn.damage} {wpn.damageType}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Lista de Banners de Ataque */}
+                <div className="space-y-1.5 mb-2 w-full min-w-0">
+                  {character.attacks.map(atk => {
+                    const isAxe = atk.name.toLowerCase().includes("machado");
+                    const isRanged = atk.name.toLowerCase().includes("azagaia") || atk.name.toLowerCase().includes("arco");
+                    const isSword = atk.name.toLowerCase().includes("espada") || atk.name.toLowerCase().includes("lâmina");
+
+                    return (
+                      <div 
+                        key={atk.id}
+                        className="rounded-lg border border-neutral-300 bg-gradient-to-r from-red-50/70 via-white to-amber-50/50 p-1.5 shadow-sm hover:border-red-400 transition-all w-full min-w-0 box-border text-left"
+                      >
+                        {/* Linha Superior: Ícone, Nome e Excluir */}
+                        <div className="flex items-center justify-between gap-1 mb-1">
+                          <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                            <span className="text-[10px] select-none">
+                              {isAxe ? "🪓" : isRanged ? "🎯" : isSword ? "⚔️" : "🗡️"}
+                            </span>
+                            <input
+                              type="text"
+                              value={atk.name}
+                              onChange={(e) => {
+                                handleAttackChange(atk.id, "name", e.target.value);
+                                setWeaponSearchQuery(e.target.value);
+                                setActiveWeaponSearchRowId(atk.id);
+                              }}
+                              onFocus={() => {
+                                setWeaponSearchQuery(atk.name);
+                                setActiveWeaponSearchRowId(atk.id);
+                              }}
+                              className="font-serif font-black text-[9px] text-neutral-900 bg-transparent focus:outline-none w-full truncate"
+                              placeholder="Nome da Arma"
+                            />
+                          </div>
+
                           <button
                             onClick={() => handleRemoveAttack(atk.id)}
                             className="text-neutral-400 hover:text-red-600 transition-colors p-0.5"
                             title="Excluir este ataque"
                           >
-                            <Trash2 size={11} />
+                            <Trash2 size={9} />
                           </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                        </div>
 
-                {/* Bloco de Anotações de Ataques */}
-                <div className="mt-1 p-1 bg-white border border-neutral-300 rounded">
-                  <textarea
-                    value={character.attackNotes || ""}
-                    onChange={(e) => setCharacter({ ...character, attackNotes: e.target.value })}
-                    rows={4}
-                    className="w-full bg-transparent border-none focus:outline-none resize-none text-[7.5px] leading-tight font-sans text-neutral-800"
-                    placeholder="• Anotações de combate, alcance de arremesso, CD de magia..."
-                  />
+                        {/* Linha Inferior: Badges de Ataque e Dano */}
+                        <div className="flex items-center gap-1.5 text-[7.5px]">
+                          {/* Botão de Rolagem de Ataque */}
+                          <button
+                            type="button"
+                            onClick={() => onQuickRoll(`Ataque com ${atk.name}`, 20, parseInt(atk.bonus, 10) || 0)}
+                            className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-100/90 hover:bg-red-200 text-red-950 font-bold border border-red-300 font-mono transition-all shadow-xs"
+                            title="Clique para rolar o ataque d20"
+                          >
+                            <span>🎲</span>
+                            <span>{atk.bonus || "+0"} Atq</span>
+                          </button>
+
+                          {/* Dano Editável */}
+                          <div className="flex-1 min-w-0">
+                            <input
+                              type="text"
+                              value={atk.damage}
+                              onChange={(e) => handleAttackChange(atk.id, "damage", e.target.value)}
+                              className="w-full font-bold text-neutral-800 bg-white/70 px-1 py-0.5 rounded border border-neutral-200 focus:outline-none font-mono text-[7.5px] truncate"
+                              placeholder="Dano (ex: 1d12+5)"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Propriedades / Notas */}
+                        {atk.notes && (
+                          <div className="mt-1 text-[6.5px] text-neutral-600 italic px-1 bg-black/5 rounded truncate">
+                            {atk.notes}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
+
+                {/* Bloco de Anotações de Combate sem Scrollbar */}
+                {character.attackNotes && (
+                  <div className="mt-1 p-1.5 bg-white border border-neutral-300 rounded text-[7px] text-neutral-700 leading-snug space-y-0.5 text-left">
+                    {character.attackNotes.split("\n").filter(Boolean).map((line, i) => (
+                      <div key={i} className="flex items-start gap-1">
+                        <span className="text-amber-600 text-[8px] leading-none">⚡</span>
+                        <span className="flex-1">{line.replace(/^[•\-\*]\s*/, "")}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-between border-t border-neutral-300 pt-0.5 mt-1">
                 <button
                   onClick={handleAddAttack}
-                  className="text-[8px] text-amber-700 hover:underline font-bold flex items-center gap-0.5"
+                  className="text-[7.5px] text-amber-700 hover:underline font-bold flex items-center gap-0.5"
                 >
-                  <Plus size={10} /> Adicionar Ataque
+                  <Plus size={9} /> Adicionar Ataque
                 </button>
                 <span className="text-[7.5px] font-extrabold uppercase text-neutral-500 tracking-wider">
                   ATAQUES E MAGIAS
@@ -855,11 +880,11 @@ export default function OfficialSheet({
               </div>
             </div>
 
-            {/* Equipamento & Moedas (Sincronizado & Banners) */}
-            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex flex-col justify-between h-auto min-h-[170px]">
-              <div className="flex gap-2">
+            {/* Equipamento & Moedas (Sincronizado & Banners Perfeitos) */}
+            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex flex-col justify-between h-auto min-h-[170px] overflow-hidden">
+              <div className="flex gap-1.5 w-full min-w-0 overflow-hidden">
                 {/* Coluna de Moedas */}
-                <div className="w-10 flex flex-col gap-1">
+                <div className="w-9 flex-shrink-0 flex flex-col gap-1">
                   {[
                     { key: "cp", label: "PC" },
                     { key: "sp", label: "PP" },
@@ -875,14 +900,14 @@ export default function OfficialSheet({
                         value={character.coins[coin.key] !== undefined && character.coins[coin.key] !== 0 ? character.coins[coin.key] : (character.coins[coin.key] === 0 ? "0" : "")}
                         placeholder="-"
                         onChange={(e) => handleCoinChange(coin.key, e.target.value)}
-                        className="w-full text-center font-bold text-[10px] leading-none bg-transparent focus:outline-none font-mono"
+                        className="w-full text-center font-bold text-[9px] leading-none bg-transparent focus:outline-none font-mono"
                       />
                     </div>
                   ))}
                 </div>
 
-                {/* Lista de Equipamentos em Banners */}
-                <div className="flex-1 flex flex-col justify-between">
+                {/* Lista de Equipamentos em Banners Sem Vazamentos */}
+                <div className="flex-1 min-w-0 overflow-hidden flex flex-col justify-between">
                   {isEditingEquipmentText ? (
                     <textarea
                       value={character.equipmentText}
@@ -891,7 +916,7 @@ export default function OfficialSheet({
                       className="w-full text-[8px] leading-relaxed bg-white p-1 rounded border border-neutral-300 focus:outline-none font-sans"
                     />
                   ) : (
-                    <div className="space-y-1 mb-1 text-left">
+                    <div className="space-y-1 mb-1 text-left w-full min-w-0 overflow-hidden">
                       {parsedEquipList.map((item, idx) => {
                         const t = item.text.toLowerCase();
                         const isRiches = t.includes("riqueza") || t.includes("po");
@@ -902,7 +927,7 @@ export default function OfficialSheet({
                         return (
                           <div 
                             key={item.id || idx}
-                            className={`flex items-center justify-between gap-1 p-1 rounded border text-[7.5px] leading-tight text-neutral-800 transition-all ${
+                            className={`flex items-center justify-between gap-1 p-1 rounded border text-[7.5px] leading-tight text-neutral-800 transition-all w-full min-w-0 overflow-hidden box-border ${
                               isRiches ? "bg-amber-100/70 border-amber-300 font-bold" :
                               isArmor ? "bg-slate-100 border-slate-300 font-semibold" :
                               isWeapon ? "bg-red-50/70 border-red-200" :
@@ -910,17 +935,17 @@ export default function OfficialSheet({
                               "bg-white border-neutral-200"
                             }`}
                           >
-                            <div className="flex items-center gap-1 min-w-0 flex-1">
-                              <span className="text-[8.5px] select-none">
+                            <div className="flex items-center gap-1 min-w-0 flex-1 overflow-hidden">
+                              <span className="text-[8.5px] flex-shrink-0 select-none">
                                 {isRiches ? "🪙" : isArmor ? "🛡️" : isWeapon ? "⚔️" : isHoly ? "☀️" : "🎒"}
                               </span>
-                              <span className="truncate">{item.text}</span>
+                              <span className="truncate flex-1 min-w-0 text-[7px] font-medium">{item.text}</span>
                             </div>
                             {!isRiches && (
                               <button
                                 type="button"
                                 onClick={() => handleDeleteEquipItem(idx)}
-                                className="text-neutral-400 hover:text-red-600 transition-colors p-0.5"
+                                className="text-neutral-400 hover:text-red-600 transition-colors p-0.5 flex-shrink-0"
                                 title="Remover item"
                               >
                                 <Trash2 size={8} />

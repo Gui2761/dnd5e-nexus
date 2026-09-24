@@ -6,6 +6,7 @@ import CompendiumModal from "./components/CompendiumModal";
 import DiceRoller from "./components/DiceRoller";
 import ShareModal from "./components/ShareModal";
 import PartyMenu from "./components/PartyMenu";
+import PartyHub from "./components/PartyHub";
 import { DEFAULT_CHARACTER } from "./data/initialCharacter";
 import { getThemeForClass } from "./utils/theme";
 import { decompressCharacterFromUrl } from "./utils/sync";
@@ -15,6 +16,17 @@ import {
 } from "lucide-react";
 
 export default function App() {
+  // Tela atual: 'hub' (Salão dos Heróis com cards de todos os personagens e criar nova ficha) ou 'sheet' (Ficha Oficial)
+  const [currentScreen, setCurrentScreen] = useState(() => {
+    if (typeof window !== "undefined") {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("sheet") || urlParams.get("view") === "sheet") {
+        return "sheet";
+      }
+    }
+    return "hub"; // Tela inicial padrão é o Salão dos Heróis (Hub)
+  });
+
   const [character, setCharacter] = useState(() => {
     // 1. Tenta carregar da URL (?sheet=...) se veio de um QR Code ou link
     if (typeof window !== "undefined") {
@@ -107,6 +119,22 @@ export default function App() {
     "Mago", "Clérigo", "Druida", "Bardo", "Monge", "Ranger", "Bruxo"
   ];
 
+  // 1. TELA INICIAL: SALÃO DOS HERÓIS (HUB DE PERSONAGENS)
+  if (currentScreen === "hub") {
+    return (
+      <PartyHub 
+        onSelectCharacter={(selectedChar) => {
+          setCharacter(selectedChar);
+          setCurrentScreen("sheet");
+          if (typeof window !== "undefined") {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }
+        }}
+      />
+    );
+  }
+
+  // 2. TELA DA FICHA DE PERSONAGEM OFICIAL (COM FLANCOS DE RAÇA & CLASSE)
   return (
     <div 
       className="min-h-screen text-slate-100 font-sans pb-16 selection:bg-amber-400 selection:text-black"
@@ -121,9 +149,18 @@ export default function App() {
       <header className="sticky top-0 z-40 bg-neutral-950/90 backdrop-blur-md border-b border-white/10 px-3 py-2 shadow-xl">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           
-          {/* Lado Esquerdo: Logo & Seletor de Classe / Tema */}
+          {/* Lado Esquerdo: Salão dos Heróis + Logo + Seletor de Tema */}
           <div className="flex items-center gap-2">
-            <span className="text-xl">🎲</span>
+            {/* Botão de Retornar ao Salão dos Heróis */}
+            <button
+              onClick={() => setCurrentScreen("hub")}
+              className="px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+              title="Voltar ao Salão dos Heróis para escolher ou criar outra ficha"
+            >
+              <span>🏰</span>
+              <span>Salão dos Heróis</span>
+            </button>
+
             <div className="flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-xl px-2.5 py-1">
               <span className="text-[10px] text-white/50 uppercase font-bold">Tema:</span>
               <select

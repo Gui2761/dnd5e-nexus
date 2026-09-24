@@ -4,8 +4,8 @@ from playwright.async_api import async_playwright
 async def main():
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
-        # Desktop view
-        page = await browser.new_page(viewport={"width": 1280, "height": 1400})
+        # Desktop view (1600px width to capture lateral flanks)
+        page = await browser.new_page(viewport={"width": 1600, "height": 1300})
         print("Navigating to https://dnd5e-nexus.vercel.app ...")
         await page.goto("https://dnd5e-nexus.vercel.app", wait_until="networkidle")
         await page.wait_for_timeout(2000)
