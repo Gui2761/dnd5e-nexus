@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { getAbilityModifier, formatModifier, getProficiencyBonus, ABILITIES, SKILLS } from "../utils/dndCalc";
+import { WEAPONS, CLASS_FEATURES_DB, SPELLS_DATABASE } from "../data/compendium";
+import CharacterArt from "./CharacterArt";
+import { Trash2, Plus, Sparkles, BookOpen } from "lucide-react";
 
 export default function OfficialSheet({
   character,
@@ -9,6 +12,10 @@ export default function OfficialSheet({
   zoomScale
 }) {
   const profBonus = getProficiencyBonus(character.level);
+  const [weaponSearchQuery, setWeaponSearchQuery] = useState("");
+  const [activeWeaponSearchRowId, setActiveWeaponSearchRowId] = useState(null);
+  const [featureSearchQuery, setFeatureSearchQuery] = useState("");
+  const [showFeatureDropdown, setShowFeatureDropdown] = useState(false);
 
   // Manipuladores de Atributos
   const handleScoreChange = (abId, val) => {
@@ -56,6 +63,31 @@ export default function OfficialSheet({
     });
   };
 
+  // Sincronização automática de Moedas e Equipamento
+  const handleCoinChange = (coinKey, val) => {
+    const num = parseInt(val, 10) || 0;
+    setCharacter(prev => {
+      const newCoins = { ...prev.coins, [coinKey]: num };
+      // Atualiza a linha de riquezas no texto de equipamento se existir
+      let eqText = prev.equipmentText || "";
+      const richesRegex = /(•?\s*Riquezas:?\s*)(.*)/i;
+      const richesLine = `• Riquezas: ${newCoins.gp || 0} PO${newCoins.sp ? `, ${newCoins.sp} PP` : ""}${newCoins.cp ? `, ${newCoins.cp} PC` : ""}`;
+      
+      if (richesRegex.test(eqText)) {
+        eqText = eqText.replace(richesRegex, richesLine);
+      } else {
+        eqText = eqText.trim() + `\n${richesLine}`;
+      }
+
+      return {
+        ...prev,
+        coins: newCoins,
+        equipmentText: eqText
+      };
+    });
+  };
+
+  // Manipuladores de Ataques
   const handleAttackChange = (id, field, value) => {
     setCharacter(prev => ({
       ...prev,
@@ -72,7 +104,7 @@ export default function OfficialSheet({
           id: "atk-" + Date.now(),
           name: "Novo Ataque",
           bonus: "+5",
-          damage: "1d8+3",
+          damage: "1d8 + 3 cortante",
           notes: ""
         }
       ]
@@ -86,10 +118,64 @@ export default function OfficialSheet({
     }));
   };
 
-  // Cálculo de Percepção Passiva
+  const handleSelectWeaponForAttack = (atkId, weapon) => {
+    const strMod = getAbilityModifier(character.stats.str);
+    const bonusVal = `+${profBonus + strMod}`;
+    const damageVal = `${weapon.damage} + ${strMod} ${weapon.damageType}`;
+    
+    setCharacter(prev => {
+      let notes = prev.attackNotes || "";
+      if (weapon.properties && !notes.includes(weapon.name)) {
+        notes += `\n• ${weapon.name}: ${weapon.properties}`;
+      }
+      return {
+        ...prev,
+        attacks: prev.attacks.map(a => a.id === atkId ? {
+          ...a,
+          name: weapon.name,
+          bonus: bonusVal,
+          damage: damageVal,
+          notes: weapon.properties
+        } : a),
+        attackNotes: notes.trim()
+      };
+    });
+    setActiveWeaponSearchRowId(null);
+  };
+
+  // Inserir Habilidade do Livro no texto de Características
+  const handleInsertFeature = (feature) => {
+    const textToAppend = `\n\n• ${feature.name} (${feature.className ? feature.className : "Geral"})\n${feature.desc}`;
+    setCharacter(prev => ({
+      ...prev,
+      featuresText: (prev.featuresText || "").trim() + textToAppend
+    }));
+    setShowFeatureDropdown(false);
+    setFeatureSearchQuery("");
+  };
+
+  // Percepção Passiva
   const wisMod = getAbilityModifier(character.stats.wis);
   const isPrcProf = character.skillsProficiencies.perception;
   const passivePerception = 10 + wisMod + (isPrcProf ? profBonus : 0);
+
+  // Filtro de armas para autocompletar
+  const filteredWeapons = weaponSearchQuery.trim()
+    ? WEAPONS.filter(w => w.name.toLowerCase().includes(weaponSearchQuery.toLowerCase())).slice(0, 5)
+    : [];
+
+  // Filtro de habilidades para autocompletar
+  const allFeatures = [];
+  Object.entries(CLASS_FEATURES_DB).forEach(([cls, list]) => {
+    list.forEach(item => allFeatures.push({ ...item, className: cls }));
+  });
+  SPELLS_DATABASE.slice(0, 15).forEach(sp => {
+    allFeatures.push({ name: `Magia: ${sp.name}`, desc: `${sp.castingTime} | ${sp.range}\n${sp.desc}`, className: "Magia" });
+  });
+
+  const filteredFeatures = featureSearchQuery.trim()
+    ? allFeatures.filter(f => f.name.toLowerCase().includes(featureSearchQuery.toLowerCase())).slice(0, 6)
+    : [];
 
   return (
     <div 
@@ -106,12 +192,11 @@ export default function OfficialSheet({
         {/* ============================================================ */}
         {/* CABEÇALHO SUPERIOR (DUNGEONS & DRAGONS + NOME + DADOS) */}
         {/* ============================================================ */}
-        <div className="flex gap-4 items-stretch mb-3 pb-2 border-b-2 border-neutral-800">
+        <div className="flex gap-4 items-stretch mb-2 pb-2 border-b-2 border-neutral-800">
           
           {/* Lado Esquerdo: Logo & Nome do Personagem */}
           <div className="flex-1 flex flex-col justify-between">
             <div className="flex items-center gap-2 mb-1">
-              {/* Ampersand estilizado do D&D */}
               <div 
                 className="w-7 h-7 rounded-full flex items-center justify-center font-serif font-black text-white text-base shadow"
                 style={{ backgroundColor: currentTheme.primaryDark || "#991b1b" }}
@@ -209,7 +294,7 @@ export default function OfficialSheet({
                 type="number"
                 value={character.xp}
                 onChange={(e) => setCharacter({ ...character, xp: parseInt(e.target.value, 10) || 0 })}
-                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate"
+                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate font-mono"
               />
               <span className="text-[7.5px] font-extrabold uppercase text-neutral-500">PONTOS DE EXPERIÊNCIA</span>
             </div>
@@ -218,7 +303,12 @@ export default function OfficialSheet({
         </div>
 
         {/* ============================================================ */}
-        {/* CORPO DA FICHA: 3 COLUNAS OFICIAIS */}
+        {/* BRASÃO COMBINADO: RAÇA + CLASSE (PALADINO MEIO-ORC HEROICO) */}
+        {/* ============================================================ */}
+        <CharacterArt className={character.className} race={character.race} />
+
+        {/* ============================================================ */}
+        {/* CORPO DA FICHA: 3 COLUNAS OFICIAIS COM NÚMEROS RETOS E ALINHADOS */}
         {/* ============================================================ */}
         <div className="grid grid-cols-[246px_260px_260px] gap-3">
           
@@ -228,7 +318,7 @@ export default function OfficialSheet({
           <div className="flex flex-col gap-2">
             
             <div className="flex gap-2">
-              {/* 6 Caixas de Atributos Verticais */}
+              {/* 6 Caixas de Atributos Verticais (Alinhamento Laser) */}
               <div className="w-[66px] flex flex-col gap-1.5">
                 {ABILITIES.map(ab => {
                   const score = character.stats[ab.id] || 10;
@@ -236,26 +326,28 @@ export default function OfficialSheet({
                   return (
                     <div 
                       key={ab.id}
-                      className="border-[1.5px] border-neutral-800 rounded-lg p-1 text-center bg-neutral-50 flex flex-col items-center shadow-xs"
+                      className="border-[1.5px] border-neutral-800 rounded-lg p-1 text-center bg-neutral-50 flex flex-col items-center justify-between h-[68px]"
                     >
-                      <span className="text-[7.5px] font-extrabold uppercase tracking-wider text-neutral-700">
+                      <span className="text-[7px] font-black uppercase tracking-wider text-neutral-700">
                         {ab.name}
                       </span>
-                      {/* Modificador Clicável */}
+                      
+                      {/* Modificador Centralizado Reto */}
                       <button 
                         onClick={() => onQuickRoll(`Teste de ${ab.name}`, 20, mod)}
-                        className="text-lg font-black font-mono leading-none my-0.5 hover:text-amber-600 transition-colors"
+                        className="text-xl font-black font-mono leading-none my-0.5 hover:text-amber-600 transition-colors w-full text-center"
                         title="Clique para rolar teste"
                       >
                         {formatModifier(mod)}
                       </button>
-                      {/* Valor do Atributo */}
-                      <div className="border border-neutral-700 rounded-full px-1.5 py-0 bg-white">
+
+                      {/* Bolha Oval do Valor Base */}
+                      <div className="border border-neutral-700 rounded-full px-2 py-0 bg-white w-9 flex items-center justify-center">
                         <input
                           type="number"
                           value={score}
                           onChange={(e) => handleScoreChange(ab.id, e.target.value)}
-                          className="w-7 text-center font-bold text-[10px] bg-transparent focus:outline-none"
+                          className="w-full text-center font-bold text-[10px] bg-transparent border-none p-0 outline-none font-mono"
                         />
                       </div>
                     </div>
@@ -285,7 +377,7 @@ export default function OfficialSheet({
                   <span className="text-[7.5px] font-extrabold uppercase text-neutral-600">BÔNUS DE PROFICIÊNCIA</span>
                 </div>
 
-                {/* Testes de Resistência */}
+                {/* Testes de Resistência (Grade com Alinhamento Perfeito) */}
                 <div className="border-[1.5px] border-neutral-800 rounded-lg p-1.5 bg-neutral-50">
                   <div className="space-y-0.5">
                     {ABILITIES.map(ab => {
@@ -293,32 +385,32 @@ export default function OfficialSheet({
                       const isProf = character.savingProficiencies[ab.id];
                       const total = mod + (isProf ? profBonus : 0);
                       return (
-                        <div key={ab.id} className="flex items-center gap-1.5 text-[9px] leading-tight">
+                        <div key={ab.id} className="grid grid-cols-[12px_22px_1fr] items-center gap-1 text-[9px] leading-tight">
                           <button
                             onClick={() => toggleSavingProf(ab.id)}
-                            className={`w-2.5 h-2.5 rounded-full border border-neutral-800 flex-shrink-0 transition-colors ${
+                            className={`w-2.5 h-2.5 rounded-full border border-neutral-800 flex items-center justify-center transition-colors ${
                               isProf ? "bg-neutral-900" : "bg-white"
                             }`}
                           />
                           <span 
                             onClick={() => onQuickRoll(`Salvaguarda de ${ab.name}`, 20, total)}
-                            className="w-5 text-center font-bold border-b border-neutral-400 font-mono cursor-pointer hover:text-amber-600"
+                            className="w-full text-center font-bold border-b border-neutral-300 font-mono cursor-pointer hover:text-amber-600"
                           >
                             {formatModifier(total)}
                           </span>
-                          <span className={`truncate ${isProf ? "font-bold text-neutral-950" : "text-neutral-700"}`}>
+                          <span className={`truncate pl-0.5 ${isProf ? "font-bold text-neutral-950" : "text-neutral-700"}`}>
                             {ab.name}
                           </span>
                         </div>
                       );
                     })}
                   </div>
-                  <div className="text-[7.5px] font-extrabold uppercase text-center text-neutral-500 border-t border-neutral-300 mt-1 pt-0.5 tracking-wider">
+                  <div className="text-[7px] font-extrabold uppercase text-center text-neutral-500 border-t border-neutral-300 mt-1 pt-0.5 tracking-wider">
                     TESTES DE RESISTÊNCIA
                   </div>
                 </div>
 
-                {/* Perícias (18 Oficiais) */}
+                {/* Perícias (Grade com Alinhamento Perfeito) */}
                 <div className="border-[1.5px] border-neutral-800 rounded-lg p-1.5 bg-neutral-50">
                   <div className="space-y-0.5">
                     {SKILLS.map(sk => {
@@ -327,27 +419,27 @@ export default function OfficialSheet({
                       const total = statMod + (isProf ? profBonus : 0);
                       const statShort = ABILITIES.find(a => a.id === sk.stat)?.name.slice(0, 3);
                       return (
-                        <div key={sk.id} className="flex items-center gap-1.5 text-[8.5px] leading-tight">
+                        <div key={sk.id} className="grid grid-cols-[12px_22px_1fr] items-center gap-1 text-[8.5px] leading-tight">
                           <button
                             onClick={() => toggleSkillProf(sk.id)}
-                            className={`w-2.5 h-2.5 rounded-full border border-neutral-800 flex-shrink-0 transition-colors ${
+                            className={`w-2.5 h-2.5 rounded-full border border-neutral-800 flex items-center justify-center transition-colors ${
                               isProf ? "bg-neutral-900" : "bg-white"
                             }`}
                           />
                           <span 
                             onClick={() => onQuickRoll(`Perícia ${sk.name}`, 20, total)}
-                            className="w-5 text-center font-bold border-b border-neutral-400 font-mono cursor-pointer hover:text-amber-600"
+                            className="w-full text-center font-bold border-b border-neutral-300 font-mono cursor-pointer hover:text-amber-600"
                           >
                             {formatModifier(total)}
                           </span>
-                          <span className={`truncate ${isProf ? "font-bold text-neutral-950" : "text-neutral-700"}`}>
-                            {sk.name} <span className="text-[7px] text-neutral-400 font-normal">({statShort})</span>
+                          <span className={`truncate pl-0.5 ${isProf ? "font-bold text-neutral-950" : "text-neutral-700"}`}>
+                            {sk.name} <span className="text-[6.5px] text-neutral-400 font-normal">({statShort})</span>
                           </span>
                         </div>
                       );
                     })}
                   </div>
-                  <div className="text-[7.5px] font-extrabold uppercase text-center text-neutral-500 border-t border-neutral-300 mt-1 pt-0.5 tracking-wider">
+                  <div className="text-[7px] font-extrabold uppercase text-center text-neutral-500 border-t border-neutral-300 mt-1 pt-0.5 tracking-wider">
                     PERÍCIAS
                   </div>
                 </div>
@@ -435,7 +527,7 @@ export default function OfficialSheet({
                   type="number"
                   value={character.hpMax}
                   onChange={(e) => setCharacter({ ...character, hpMax: parseInt(e.target.value, 10) || 1 })}
-                  className="w-8 font-bold text-neutral-900 bg-transparent text-right focus:outline-none"
+                  className="w-8 font-bold text-neutral-900 bg-transparent text-right focus:outline-none font-mono"
                 />
               </div>
               <input
@@ -473,7 +565,7 @@ export default function OfficialSheet({
                     type="text"
                     value={character.hitDiceTotal}
                     onChange={(e) => setCharacter({ ...character, hitDiceTotal: e.target.value })}
-                    className="w-12 text-right font-bold text-neutral-800 bg-transparent focus:outline-none"
+                    className="w-12 text-right font-bold text-neutral-800 bg-transparent focus:outline-none font-mono"
                   />
                 </div>
                 <input
@@ -525,27 +617,52 @@ export default function OfficialSheet({
               </div>
             </div>
 
-            {/* Tabela de Ataques e Magias */}
-            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex flex-col justify-between min-h-[175px]">
+            {/* Tabela de Ataques e Magias com Autocompletar e Excluir */}
+            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex flex-col justify-between min-h-[185px] relative">
               <div>
                 <table className="w-full text-left border-collapse text-[8.5px]">
                   <thead>
                     <tr className="border-b border-neutral-400 text-[7px] font-extrabold uppercase text-neutral-600">
-                      <th className="py-0.5 w-[45%]">NOME</th>
-                      <th className="py-0.5 w-[20%] text-center">ATAQUE</th>
-                      <th className="py-0.5 w-[35%]">DANO / TIPO</th>
+                      <th className="py-0.5 w-[42%]">NOME</th>
+                      <th className="py-0.5 w-[18%] text-center">ATAQUE</th>
+                      <th className="py-0.5 w-[32%]">DANO / TIPO</th>
+                      <th className="py-0.5 w-[8%] text-right"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {character.attacks.map(atk => (
-                      <tr key={atk.id} className="border-b border-neutral-200">
-                        <td className="py-0.5">
+                      <tr key={atk.id} className="border-b border-neutral-200 group">
+                        <td className="py-0.5 relative">
                           <input
                             type="text"
                             value={atk.name}
-                            onChange={(e) => handleAttackChange(atk.id, "name", e.target.value)}
+                            onChange={(e) => {
+                              handleAttackChange(atk.id, "name", e.target.value);
+                              setWeaponSearchQuery(e.target.value);
+                              setActiveWeaponSearchRowId(atk.id);
+                            }}
+                            onFocus={() => {
+                              setWeaponSearchQuery(atk.name);
+                              setActiveWeaponSearchRowId(atk.id);
+                            }}
                             className="w-full font-bold text-neutral-900 bg-transparent focus:outline-none"
                           />
+                          {/* Dropdown de sugestão do Livro enquanto digita */}
+                          {activeWeaponSearchRowId === atk.id && filteredWeapons.length > 0 && (
+                            <div className="absolute left-0 top-full mt-0.5 bg-neutral-900 text-white rounded-md shadow-xl border border-amber-400 z-30 p-1 w-48 text-[8px]">
+                              <span className="text-[6.5px] text-amber-300 font-bold block mb-0.5 uppercase">Sugestões do Livro:</span>
+                              {filteredWeapons.map((wpn, idx) => (
+                                <div
+                                  key={idx}
+                                  onClick={() => handleSelectWeaponForAttack(atk.id, wpn)}
+                                  className="p-1 hover:bg-neutral-800 cursor-pointer rounded flex justify-between items-center"
+                                >
+                                  <span className="font-bold">{wpn.name}</span>
+                                  <span className="text-red-300 font-mono">{wpn.damage}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </td>
                         <td className="py-0.5 text-center">
                           <button
@@ -563,6 +680,16 @@ export default function OfficialSheet({
                             className="w-full text-neutral-800 bg-transparent focus:outline-none"
                           />
                         </td>
+                        {/* Botão de Excluir Ataque (🗑️) */}
+                        <td className="py-0.5 text-right">
+                          <button
+                            onClick={() => handleRemoveAttack(atk.id)}
+                            className="text-neutral-400 hover:text-red-600 transition-colors p-0.5"
+                            title="Excluir este ataque"
+                          >
+                            <Trash2 size={11} />
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -571,10 +698,11 @@ export default function OfficialSheet({
                 {/* Bloco de Anotações de Ataques */}
                 <div className="mt-1 p-1 bg-white border border-neutral-300 rounded">
                   <textarea
-                    value={character.attackNotes || "• CD Resistência de Magia: 13 (8 + 2 Prof + 3 Car)\n• Bônus de Ataque Mágico: +5\n• Machado Grande: Pesada, duas mãos.\n• Azagaias: Arremesso (9m / 36m).\n• Cota de Malha: CA fixa 16 (desvantagem em Furtividade)."}
+                    value={character.attackNotes || ""}
                     onChange={(e) => setCharacter({ ...character, attackNotes: e.target.value })}
                     rows={4}
                     className="w-full bg-transparent border-none focus:outline-none resize-none text-[7.5px] leading-tight font-sans text-neutral-800"
+                    placeholder="• Anotações de combate, alcance de arremesso, CD de magia..."
                   />
                 </div>
               </div>
@@ -582,9 +710,9 @@ export default function OfficialSheet({
               <div className="flex items-center justify-between border-t border-neutral-300 pt-0.5 mt-1">
                 <button
                   onClick={handleAddAttack}
-                  className="text-[8px] text-amber-700 hover:underline font-bold"
+                  className="text-[8px] text-amber-700 hover:underline font-bold flex items-center gap-0.5"
                 >
-                  + Adicionar Ataque
+                  <Plus size={10} /> Adicionar Ataque
                 </button>
                 <span className="text-[7.5px] font-extrabold uppercase text-neutral-500 tracking-wider">
                   ATAQUES E MAGIAS
@@ -592,7 +720,7 @@ export default function OfficialSheet({
               </div>
             </div>
 
-            {/* Equipamento & Moedas */}
+            {/* Equipamento & Moedas (Sincronizado) */}
             <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex-1 flex flex-col justify-between min-h-[170px]">
               <div className="flex gap-2 h-full">
                 {/* Coluna de Moedas */}
@@ -608,13 +736,10 @@ export default function OfficialSheet({
                       <span className="text-[6px] font-extrabold text-neutral-500 block leading-none">{coin.label}</span>
                       <input
                         type="number"
-                        value={character.coins[coin.key] || ""}
+                        value={character.coins[coin.key] !== undefined && character.coins[coin.key] !== 0 ? character.coins[coin.key] : (character.coins[coin.key] === 0 ? "0" : "")}
                         placeholder="-"
-                        onChange={(e) => setCharacter({
-                          ...character,
-                          coins: { ...character.coins, [coin.key]: parseInt(e.target.value, 10) || 0 }
-                        })}
-                        className="w-full text-center font-bold text-[9px] bg-transparent focus:outline-none"
+                        onChange={(e) => handleCoinChange(coin.key, e.target.value)}
+                        className="w-full text-center font-bold text-[9px] bg-transparent focus:outline-none font-mono"
                       />
                     </div>
                   ))}
@@ -707,14 +832,49 @@ export default function OfficialSheet({
               </span>
             </div>
 
-            {/* Características e Habilidades (Grande) */}
-            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex-1 flex flex-col justify-between min-h-[300px]">
+            {/* Características e Habilidades com Busca do Livro */}
+            <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex-1 flex flex-col justify-between min-h-[300px] relative">
+              {/* Barra de Busca de Regras para Inserção Instantânea */}
+              <div className="mb-1.5 relative">
+                <div className="flex items-center gap-1 bg-white border border-neutral-300 rounded px-1.5 py-0.5">
+                  <Sparkles size={11} className="text-amber-600" />
+                  <input
+                    type="text"
+                    placeholder="Digitar poder/magia do livro (ex: Destruição Divina, Fúria)..."
+                    value={featureSearchQuery}
+                    onChange={(e) => {
+                      setFeatureSearchQuery(e.target.value);
+                      setShowFeatureDropdown(true);
+                    }}
+                    onFocus={() => setShowFeatureDropdown(true)}
+                    className="w-full text-[7.5px] bg-transparent border-none focus:outline-none text-neutral-900 placeholder-neutral-400"
+                  />
+                </div>
+
+                {showFeatureDropdown && filteredFeatures.length > 0 && (
+                  <div className="absolute left-0 right-0 top-full mt-1 bg-neutral-900 text-white rounded-md shadow-2xl border border-amber-400 z-30 p-1 text-[8px] max-h-48 overflow-y-auto">
+                    <span className="text-[7px] text-amber-300 font-bold block mb-1 uppercase">Clique para Inserir na Ficha:</span>
+                    {filteredFeatures.map((f, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => handleInsertFeature(f)}
+                        className="p-1.5 hover:bg-neutral-800 cursor-pointer rounded border-b border-white/5 last:border-none"
+                      >
+                        <div className="font-bold text-amber-200">{f.name}</div>
+                        <div className="text-[7px] text-neutral-400 line-clamp-1">{f.desc}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <textarea
                 value={character.featuresText}
                 onChange={(e) => setCharacter({ ...character, featuresText: e.target.value })}
                 rows={16}
                 className="w-full text-[8px] leading-relaxed bg-transparent border-none focus:outline-none resize-none font-sans"
               />
+              
               <div className="text-[7.5px] font-extrabold uppercase text-center text-neutral-500 border-t border-neutral-300 pt-0.5 tracking-wider">
                 CARACTERÍSTICAS E HABILIDADES
               </div>

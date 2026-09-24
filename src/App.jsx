@@ -8,12 +8,13 @@ import BioTab from "./components/BioTab";
 import CompendiumModal from "./components/CompendiumModal";
 import DiceRoller from "./components/DiceRoller";
 import ShareModal from "./components/ShareModal";
+import PartyMenu from "./components/PartyMenu";
 import { DEFAULT_CHARACTER } from "./data/initialCharacter";
 import { getThemeForClass } from "./utils/theme";
 import { decompressCharacterFromUrl } from "./utils/sync";
 import { 
   BookOpen, Dices, Smartphone, Save, Printer, ZoomIn, ZoomOut, Maximize2, 
-  Check, Layout, Smartphone as PhoneIcon 
+  Check, Layout, Smartphone as PhoneIcon, Users, Cloud 
 } from "lucide-react";
 
 export default function App() {
@@ -47,6 +48,7 @@ export default function App() {
   const [isCompendiumOpen, setIsCompendiumOpen] = useState(false);
   const [isDiceRollerOpen, setIsDiceRollerOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+  const [isPartyMenuOpen, setIsPartyMenuOpen] = useState(false);
   const [saveToast, setSaveToast] = useState(false);
   const [quickRollNotification, setQuickRollNotification] = useState(null);
 
@@ -172,7 +174,17 @@ export default function App() {
               className="px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 transition-all flex items-center gap-1 shadow-sm"
               title="Carregar a ficha canônica do Thokk Lâmina-Partida"
             >
-              <span>⚔️ Ficha do Thokk</span>
+              <span>⚔️ Thokk</span>
+            </button>
+
+            {/* Botão de Mesa Online / Fichas do Grupo */}
+            <button
+              onClick={() => setIsPartyMenuOpen(true)}
+              className="px-2.5 py-1 rounded-xl text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/30 transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+              title="Ver e alternar entre fichas de amigos online na nuvem"
+            >
+              <Users size={13} className="text-emerald-400" />
+              <span>Mesa Online</span>
             </button>
           </div>
 
@@ -433,6 +445,14 @@ export default function App() {
         character={character}
         currentTheme={currentTheme}
         onImportCharacter={(imported) => setCharacter(imported)}
+      />
+
+      <PartyMenu
+        isOpen={isPartyMenuOpen}
+        onClose={() => setIsPartyMenuOpen(false)}
+        currentCharacter={character}
+        onSelectCharacter={(newChar) => setCharacter(newChar)}
+        currentTheme={currentTheme}
       />
 
     </div>
