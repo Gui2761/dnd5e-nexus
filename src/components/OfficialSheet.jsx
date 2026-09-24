@@ -390,61 +390,45 @@ export default function OfficialSheet({
           </div>
 
           {/* Lado Direito: Quadro de Informações do Personagem (2x3) */}
-          <div className="w-[500px] border-2 border-neutral-800 rounded-md p-2 bg-neutral-50 grid grid-cols-3 grid-rows-2 gap-x-3 gap-y-1">
-            {/* Classe e Nível com Seletor Canônico */}
-            <div className="flex items-end justify-between border-b border-neutral-400 pb-0.5 gap-1">
-              <div className="flex-1 min-w-0">
+          <div className="w-[500px] border-2 border-neutral-800 rounded-md p-2 bg-neutral-50 grid grid-cols-[1.3fr_1fr_1fr] grid-rows-2 gap-x-3 gap-y-1">
+            {/* Classe e Nível Canônico com Espaço Completo */}
+            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5">
+              <div className="flex items-center justify-between gap-1.5 w-full">
                 <input
                   type="text"
                   value={character.className}
                   onChange={(e) => setCharacter({ ...character, className: e.target.value })}
-                  className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate w-full"
+                  className="text-xs sm:text-[13px] font-black text-neutral-900 bg-transparent focus:outline-none flex-1 min-w-0"
                   placeholder="Classe"
+                  title="Classe do Personagem (ex: Paladino, Guerreiro, Mago)"
                 />
-                <span className="text-[7px] font-extrabold uppercase text-neutral-500 block">CLASSE</span>
+                
+                {/* Seletor Compacto e Elegante de Nível */}
+                <div className="flex items-center gap-1 shrink-0 bg-white border border-neutral-300 rounded px-1.5 py-0.5 shadow-xs">
+                  <span className="text-[8.5px] font-black text-amber-900 select-none">Nv.</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max="20"
+                    value={character.level}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (!isNaN(val)) handleLevelChange(val);
+                    }}
+                    className="w-5 text-center font-black text-xs text-amber-950 bg-transparent focus:outline-none font-mono cursor-pointer"
+                    title="Nível (1 a 20) — clique para digitar"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsLevelUpModalOpen(true)}
+                    className="p-0.5 rounded bg-amber-400 text-black hover:bg-amber-300 transition-colors shadow-xs ml-0.5"
+                    title="Abrir Gestor de Subida de Nível & Desbloqueio de Poderes"
+                  >
+                    <TrendingUp size={10} />
+                  </button>
+                </div>
               </div>
-              
-              <div className="flex items-center gap-0.5 bg-white border border-neutral-300 rounded px-1 py-0.5 shadow-xs mb-0.5 flex-shrink-0">
-                <button
-                  type="button"
-                  onClick={() => handleLevelChange((character.level || 1) - 1)}
-                  disabled={(character.level || 1) <= 1}
-                  className="w-3.5 h-3.5 rounded bg-neutral-100 hover:bg-neutral-200 disabled:opacity-30 text-neutral-700 text-[9px] font-black flex items-center justify-center select-none"
-                  title="Diminuir Nível"
-                >
-                  -
-                </button>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  value={character.level}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value, 10);
-                    if (!isNaN(val)) handleLevelChange(val);
-                  }}
-                  className="w-5 text-center font-black text-xs text-amber-900 bg-transparent focus:outline-none font-mono"
-                  title="Nível do Personagem (1 a 20)"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleLevelChange((character.level || 1) + 1)}
-                  disabled={(character.level || 1) >= 20}
-                  className="w-3.5 h-3.5 rounded bg-amber-100 hover:bg-amber-200 disabled:opacity-30 text-amber-900 text-[9px] font-black flex items-center justify-center select-none"
-                  title="Aumentar Nível"
-                >
-                  +
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsLevelUpModalOpen(true)}
-                  className="ml-0.5 text-[8px] px-1 py-0.5 rounded bg-amber-400 text-black font-extrabold hover:bg-amber-300 transition-all shadow-xs flex items-center gap-0.5"
-                  title="Painel de Subida de Nível & Poderes"
-                >
-                  <TrendingUp size={9} />
-                  <span>Nv</span>
-                </button>
-              </div>
-              <span className="text-[7px] font-extrabold uppercase text-neutral-500 self-end mb-0.5">NÍVEL</span>
+              <span className="text-[7.5px] font-extrabold uppercase text-neutral-500 mt-0.5">CLASSE E NÍVEL</span>
             </div>
 
             {/* Antecedente */}
