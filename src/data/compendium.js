@@ -1,6 +1,9 @@
-// Compêndio Canônico D&D 5ª Edição Oficial (Baseado no Livro do Jogador - Biblioteca Élfica - 315 págs)
-// Contém Armas, Armaduras, Magias, Habilidades de Classe, Antecedentes, Regras de Jogo, Talentos e Condições
+// ============================================================================
+// COMPÊNDIO CANÔNICO D&D 5ª EDIÇÃO OFICIAL
+// Baseado integralmente no Livro do Jogador (Biblioteca Élfica - 315 páginas)
+// ============================================================================
 
+// 1. TODAS AS ARMAS OFICIAIS (Capítulo 5: Equipamento - Tabela de Armas, Pág 151)
 export const WEAPONS = [
   // Armas Simples Corpo a Corpo
   { name: "Adaga", type: "Simples Corpo a Corpo", damage: "1d4", damageType: "perfurante", properties: "Acuidade, leve, arremesso (distância 6/18)", cost: "2 po", weight: "0,5 kg", desc: "Uma lâmina afiada perfeita para combate furtivo ou arremesso rápido." },
@@ -48,6 +51,7 @@ export const WEAPONS = [
   { name: "Rede", type: "Marcial à Distância", damage: "—", damageType: "especial", properties: "Especial, arremesso (distância 1,5/4,5)", cost: "1 po", weight: "1,5 kg", desc: "Prende uma criatura Grande ou menor na condição Impedido até que ela escape (CD 10 FOR)." }
 ];
 
+// 2. TODAS AS ARMADURAS OFICIAIS (Capítulo 5: Equipamento - Tabela de Armaduras, Pág 148)
 export const ARMORS = [
   // Armaduras Leves
   { name: "Acolchoada", category: "Leve", acFormula: "11 + mod DES", baseAC: 11, strReq: 0, stealthDisadv: true, cost: "5 po", weight: "4 kg", desc: "Camadas acolchoadas de pano e estofo." },
@@ -71,6 +75,39 @@ export const ARMORS = [
   { name: "Escudo", category: "Escudo", acFormula: "+2 CA", baseAC: 2, strReq: 0, stealthDisadv: false, cost: "10 po", weight: "3 kg", desc: "Escudo de madeira ou metal empunhado em uma das mãos, concedendo +2 na CA." }
 ];
 
+// 3. EQUIPAMENTO DE AVENTURA & FERRAMENTAS (Capítulo 5: Págs 151-157)
+export const GEAR_DB = [
+  { name: "Poção de Cura", category: "Item Mágico / Alquimia", cost: "50 po", weight: "0,25 kg", desc: "Um personagem que beber o líquido vermelho mágico deste frasco recupera 2d4 + 2 pontos de vida. Beber ou administrar uma poção exige uma ação." },
+  { name: "Água Benta (Frasco)", category: "Item Sagrado", cost: "25 po", weight: "0,5 kg", desc: "Como ação, espalhe ou arremesse a até 6m (arma improvisada). Se acertar um corruptor ou morto-vivo, causa 2d6 de dano radiante." },
+  { name: "Antídoto / Antitoxina", category: "Alquimia", cost: "50 po", weight: "—", desc: "Uma criatura que beber este líquido ganha vantagem em salvaguardas contra veneno por 1 hora e encerra a condição envenenado." },
+  { name: "Mochila de Aventureiro", category: "Recipiente", cost: "2 po", weight: "2,5 kg", desc: "Uma mochila resistente que comporta até 30 kg ou 42 litros de volume de equipamentos." },
+  { name: "Saco de Dormir", category: "Equipamento de Acampamento", cost: "1 po", weight: "3,5 kg", desc: "Manta grossa estofada de inverno para repouso seguro durante descansos longos em campo aberto." },
+  { name: "Corda de Cânhamo (15m)", category: "Equipamento", cost: "1 po", weight: "5 kg", desc: "Corda com 2 pontos de vida e que pode ser arrebentada com um teste de Força CD 17." },
+  { name: "Corda de Seda (15m)", category: "Equipamento", cost: "10 po", weight: "2,5 kg", desc: "Corda leve de seda élfica com 2 pontos de vida e teste de Força CD 17 para arrebentar." },
+  { name: "Tocha", category: "Iluminação", cost: "1 pc", weight: "0,5 kg", desc: "Queima por 1 hora, iluminando 6m em luz brilhante e mais 6m em penumbra. Se atacar com ela, causa 1 de dano de fogo." },
+  { name: "Lanterna Furta-Fogo", category: "Iluminação", cost: "10 po", weight: "1 kg", desc: "Projeta um cone de luz brilhante de 18 metros e penumbra por mais 18 metros usando 1 frasco de óleo por 6 horas." },
+  { name: "Lanterna Coberta", category: "Iluminação", cost: "5 po", weight: "1 kg", desc: "Lança luz brilhante em raio de 9 metros e penumbra por mais 9 metros. Possui tampa para diminuir a luz para 1,5m de penumbra." },
+  { name: "Óleo (Frasco)", category: "Alquimia", cost: "1 pp", weight: "0,5 kg", desc: "Arremessável a até 6m. Se o alvo coberto sofrer dano de fogo no próximo minuto, sofre +5 de dano flamejante adicional." },
+  { name: "Pé de Cabra", category: "Ferramenta", cost: "2 po", weight: "2,5 kg", desc: "Concede vantagem em testes de Força onde uma alavanca física possa ser aplicada." },
+  { name: "Algemas de Metal", category: "Equipamento", cost: "2 po", weight: "2 kg", desc: "Podem prender criaturas Pequenas ou Médias. Escapar exige teste de Destreza CD 20; quebrar exige Força CD 20; arrombar exige CD 15 com ferramentas de ladrão." },
+  { name: "Arpéu", category: "Equipamento de Escalada", cost: "2 po", weight: "2 kg", desc: "Gancho de ferro reforçado para amarrar em cordas e escalar muralhas ou despenhadeiros." },
+  { name: "Esferas de Metal (Sacola com 1.000)", category: "Tática de Terreno", cost: "1 po", weight: "1 kg", desc: "Espalhe numa área quadrada de 3m. Criaturas que se moverem pela área devem ter sucesso em salvaguarda de Destreza CD 10 ou caem no chão (condição Caído)." },
+  { name: "Estrepes (Bolsa com 20)", category: "Tática de Terreno", cost: "1 po", weight: "1 kg", desc: "Espalhe numa área de 1,5m². Criaturas que pisarem devem passar em teste de Destreza CD 15 ou sofrem 1 dano e seu deslocamento é reduzido em 3m." },
+  { name: "Ferramentas de Ladrão", category: "Ferramentas", cost: "25 po", weight: "0,5 kg", desc: "Inclui gazuas, pequenas limas, alicates e espelho. Permite adicionar seu bônus de proficiência para arrombar trancas e desarmar armadilhas." },
+  { name: "Kit de Disfarce", category: "Ferramentas", cost: "25 po", weight: "1,5 kg", desc: "Maquiagens, perucas, tinturas e roupas para criar identidades visuais enganosas." },
+  { name: "Kit de Falsificação", category: "Ferramentas", cost: "15 po", weight: "2,5 kg", desc: "Penas especiais, ceras de sinete, tintas de várias cores e pergaminhos para criar documentos oficiais falsos." },
+  { name: "Kit de Herbalismo", category: "Ferramentas", cost: "5 po", weight: "1,5 kg", desc: "Bolsas de ervas medicinais, tesouras e almofariz. Necessário para produzir antitoxinas e poções de cura." },
+  { name: "Kit de Primeiros Socorros", category: "Equipamento Médico", cost: "5 po", weight: "1,5 kg", desc: "Possui 10 usos. Como uma ação, gaste 1 uso para estabilizar imediatamente uma criatura com 0 PV sem precisar de teste de Medicina." },
+  { name: "Kit de Venenos", category: "Ferramentas", cost: "50 po", weight: "1 kg", desc: "Contém frascos de vidro, reagentes tóxicos e seringas para manipular e aplicar venenos mortais com segurança." },
+  { name: "Símbolo Sagrado (Amuleto / Relicário)", category: "Foco Divino", cost: "5 po", weight: "0,5 kg", desc: "Foco de conjuração para canalizar milagres e magias divinas de Clérigos e Paladinos." },
+  { name: "Grimório em Branco", category: "Livro de Mago", cost: "50 po", weight: "1,5 kg", desc: "Volume encadernado em couro com 100 páginas de pergaminho próprio para copiar e registrar magias arcanas." },
+  { name: "Pacote de Explorador", category: "Pacote Inicial", cost: "10 po", weight: "26 kg", desc: "Inclui: mochila, saco de dormir, kit de refeição, caixa de fogo, 10 tochas, 10 dias de rações de viagem e cantil de água." },
+  { name: "Pacote de Masmorra", category: "Pacote Inicial", cost: "12 po", weight: "28 kg", desc: "Inclui: mochila, pé de cabra, martelo, 10 pítons de ferro, 10 tochas, caixa de fogo, 10 dias de rações, cantil e 15m de corda." },
+  { name: "Pacote de Sacerdote", category: "Pacote Inicial", cost: "19 po", weight: "11 kg", desc: "Inclui: mochila, cobertor, 10 velas, caixa de fogo, caixa de incenso, 7 varetas de incenso, vestes e 2 dias de rações." },
+  { name: "Pacote de Estudioso", category: "Pacote Inicial", cost: "40 po", weight: "5 kg", desc: "Inclui: mochila, livro de conhecimentos, vidro de tinta preta, pena, 10 folhas de pergaminho, saquinho de areia e faquinha." }
+];
+
+// 4. TODOS OS 13 ANTECEDENTES OFICIAIS (Capítulo 4: Págs 125-144)
 export const BACKGROUNDS_DB = [
   {
     name: "Acólito",
@@ -191,6 +228,7 @@ export const BACKGROUNDS_DB = [
   }
 ];
 
+// 5. REGRAS ESSENCIAIS DE JOGO (Capítulos 7, 8, 9 e 10)
 export const CORE_RULES_DB = [
   {
     name: "Descanso Curto (Short Rest)",
@@ -229,51 +267,66 @@ export const CORE_RULES_DB = [
   }
 ];
 
+// 6. MAGIAS EXPANDIDAS (Capítulo 11: Lista e Descrições de Magias)
 export const SPELLS_DATABASE = [
   // Truques (Nível 0)
-  { name: "Golpe Certeiro (True Strike)", level: 0, school: "Adivinhação", castingTime: "1 ação", range: "9 metros", components: "S", duration: "Concentração, até 1 rodada", desc: "Você aponta para um alvo no alcance. No seu próximo turno, você ganha vantagem na sua primeira jogada de ataque contra o alvo." },
-  { name: "Raio de Fogo (Fire Bolt)", level: 0, school: "Evocação", castingTime: "1 ação", range: "36 metros", components: "V, S", duration: "Instantâneo", damage: "1d10 fogo", desc: "Você arremessa um feixe de fogo num alvo. Faça um ataque mágico à distância. Se acertar, causa 1d10 de dano de fogo (2d10 no 5º nível, 3d10 no 11º, 4d10 no 17º)." },
-  { name: "Chicote de Espinhos (Thorn Whip)", level: 0, school: "Transmutação", castingTime: "1 ação", range: "9 metros", components: "V, S, M", duration: "Instantâneo", damage: "1d6 perfurante", desc: "Você cria um chicote longo de vinhas espinhosas. Se acertar, causa 1d6 de dano e se o alvo for Grande ou menor, você o puxa até 3 metros na sua direção." },
-  { name: "Chama Sagrada (Sacred Flame)", level: 0, school: "Evocação", castingTime: "1 ação", range: "18 metros", components: "V, S", duration: "Instantâneo", damage: "1d8 radiante", desc: "Luz flamejante desce sobre uma criatura visível. O alvo deve ter sucesso num teste de resistência de Destreza ou sofrer 1d8 de dano radiante. O alvo não recebe benefício de cobertura para este teste." },
   { name: "Rajada Mística (Eldritch Blast)", level: 0, school: "Evocação", castingTime: "1 ação", range: "36 metros", components: "V, S", duration: "Instantâneo", damage: "1d10 energia", desc: "Um feixe de energia crepitante atinge uma criatura. Ataque mágico à distância: 1d10 de dano de energia. Cria mais feixes nos níveis 5 (2 feixes), 11 (3 feixes) e 17 (4 feixes)." },
-  { name: "Orientação (Guidance)", level: 0, school: "Adivinhação", castingTime: "1 ação", range: "Toque", components: "V, S", duration: "Concentração, até 1 minuto", desc: "Você toca uma criatura disposta. Uma vez antes da magia acabar, o alvo pode rolar um d4 e adicionar o resultado a um teste de habilidade de sua escolha." },
+  { name: "Raio de Fogo (Fire Bolt)", level: 0, school: "Evocação", castingTime: "1 ação", range: "36 metros", components: "V, S", duration: "Instantâneo", damage: "1d10 fogo", desc: "Você arremessa um feixe de fogo num alvo. Faça um ataque mágico à distância. Se acertar, causa 1d10 de dano de fogo (2d10 no 5º nível, 3d10 no 11º, 4d10 no 17º)." },
+  { name: "Chama Sagrada (Sacred Flame)", level: 0, school: "Evocação", castingTime: "1 ação", range: "18 metros", components: "V, S", duration: "Instantâneo", damage: "1d8 radiante", desc: "Luz flamejante desce sobre uma criatura visível. O alvo deve ter sucesso num teste de resistência de Destreza ou sofrer 1d8 de dano radiante. O alvo não recebe benefício de cobertura para este teste." },
+  { name: "Chicote de Espinhos (Thorn Whip)", level: 0, school: "Transmutação", castingTime: "1 ação", range: "9 metros", components: "V, S, M", duration: "Instantâneo", damage: "1d6 perfurante", desc: "Você cria um chicote longo de vinhas espinhosas. Se acertar, causa 1d6 de dano e se o alvo for Grande ou menor, você o puxa até 3 metros na sua direção." },
+  { name: "Raio de Gelo (Ray of Frost)", level: 0, school: "Evocação", castingTime: "1 ação", range: "18 metros", components: "V, S", duration: "Instantâneo", damage: "1d8 frio", desc: "Um raio de luz branca e azulada gélida atinge o alvo. Causa 1d8 de dano de frio e o deslocamento do alvo é reduzido em 3 metros até o início do seu próximo turno." },
+  { name: "Toque Chocante (Shocking Grasp)", level: 0, school: "Evocação", castingTime: "1 ação", range: "Toque", components: "V, S", duration: "Instantâneo", damage: "1d8 elétrico", desc: "Eletricidade estala em sua mão. Ataque mágico corpo a corpo (com vantagem se o alvo usar armadura de metal). Causa 1d8 elétrico e impede o alvo de usar reações até o início do turno dele." },
+  { name: "Zombaria Viciosa (Vicious Mockery)", level: 0, school: "Encantamento", castingTime: "1 ação", range: "18 metros", components: "V", duration: "Instantâneo", damage: "1d4 psíquico", desc: "Você lança insultos com magia sutil. Teste de Sabedoria do alvo: falha causa 1d4 psíquico e impõe desvantagem na próxima jogada de ataque que ele fizer." },
+  { name: "Rajada de Veneno (Poison Spray)", level: 0, school: "Conjuração", castingTime: "1 ação", range: "3 metros", components: "V, S", duration: "Instantâneo", damage: "1d12 veneno", desc: "Você estende a mão e projeta um jato de gás tóxico. O alvo deve ter sucesso em uma salvaguarda de Constituição ou sofrer 1d12 de dano de veneno." },
+  { name: "Ilusão Menor (Minor Illusion)", level: 0, school: "Ilusão", castingTime: "1 ação", range: "9 metros", components: "S, M", duration: "1 minuto", desc: "Você cria um som espectral ou uma imagem de um objeto no alcance (cubo de até 1,5m). Interagir fisicamente com a ilusão ou passar em teste de Investigação revela que é uma ilusão." },
+  { name: "Mãos Mágicas (Mage Hand)", level: 0, school: "Conjuração", castingTime: "1 ação", range: "9 metros", components: "V, S", duration: "1 minuto", desc: "Uma mão espectral flutuante surge no alcance. Você pode usá-la para manipular objetos, abrir portas destrancadas ou pegar itens até 4,5 kg." },
+  { name: "Mensagem (Message)", level: 0, school: "Transmutação", castingTime: "1 ação", range: "36 metros", components: "V, S, M", duration: "1 rodada", desc: "Você aponta para uma criatura no alcance e sussurra uma mensagem. O alvo ouve e pode responder em um sussurro que só você escuta através de paredes não muito espessas." },
+  { name: "Orientação (Guidance)", level: 0, school: "Adivinhação", castingTime: "1 ação", range: "Toque", components: "V, S", duration: "Concentração, até 1 minuto", desc: "Você toca uma criatura disposta. Uma vez antes da magia acabar, o alvo pode rolar um d4 e adicionar o resultado a um teste de atributo de sua escolha." },
   { name: "Luz (Light)", level: 0, school: "Evocação", castingTime: "1 ação", range: "Toque", components: "V, M", duration: "1 hora", desc: "Você toca um objeto emitindo luz brilhante num raio de 6 metros e penumbra por mais 6 metros." },
-  { name: "Mãos Mágicas (Mage Hand)", level: 0, school: "Conjuração", castingTime: "1 ação", range: "9 metros", components: "V, S", duration: "1 minuto", desc: "Uma mão espectral flutuante surge no alcance. Você pode usá-la para manipular objetos, abrir portas ou pegar itens até 4,5 kg." },
-  { name: "Mensagem (Message)", level: 0, school: "Transmutação", castingTime: "1 ação", range: "36 metros", components: "V, S, M", duration: "1 rodada", desc: "Você aponta para uma criatura no alcance e sussurra uma mensagem. O alvo ouve e pode responder em um sussurro que só você escuta." },
-  { name: "Zombaria Viciosa (Vicious Mockery)", level: 0, school: "Encantamento", castingTime: "1 ação", range: "18 metros", components: "V", duration: "Instantâneo", damage: "1d4 psíquico", desc: "Você lança uma sequência de insultos enlaçados com magia sutil. Teste de Sabedoria do alvo: falha causa 1d4 psíquico e desvantagem na próxima jogada de ataque." },
-  { name: "Consertar (Mending)", level: 0, school: "Transmutação", castingTime: "1 minuto", range: "Toque", components: "V, S, M", duration: "Instantâneo", desc: "Repara uma única quebra ou rasgo em um objeto que você toca, como uma corrente quebrada, uma chave partida ou uma capa rasgada." },
+  { name: "Taumaturgia (Thaumaturgy)", level: 0, school: "Transmutação", castingTime: "1 ação", range: "9 metros", components: "V", duration: "Até 1 minuto", desc: "Manifesta pequenas maravilhas: voz 3 vezes mais alta, chamas tremeluzindo, tremores no chão, estrondos ou olhos brilhantes." },
+  { name: "Prestidigitação (Prestidigitation)", level: 0, school: "Transmutação", castingTime: "1 ação", range: "3 metros", components: "V, S", duration: "Até 1 hora", desc: "Pequenos truques: acender velas, limpar ou sujar roupas, aquecer ou resfriar comida, criar aromas e símbolos coloridos." },
   { name: "Preservar os Mortos (Spare the Dying)", level: 0, school: "Necromancia", castingTime: "1 ação", range: "Toque", components: "V, S", duration: "Instantâneo", desc: "Você toca uma criatura viva que tenha 0 pontos de vida. A criatura fica estabilizada imediatamente." },
 
   // Nível 1
-  { name: "Cura pelas Mãos / Curar Ferimentos (Cure Wounds)", level: 1, school: "Evocação", castingTime: "1 ação", range: "Toque", components: "V, S", duration: "Instantâneo", damage: "1d8 + mod", desc: "Uma criatura que você tocar recupera pontos de vida iguais a 1d8 + modificador da sua habilidade de conjuração. (+1d8 por nível superior)." },
-  { name: "Palavra Curativa (Healing Word)", level: 1, school: "Evocação", castingTime: "1 ação bônus", range: "18 metros", components: "V", duration: "Instantâneo", damage: "1d4 + mod", desc: "Você profere uma palavra de poder. Uma criatura à sua vista no alcance recupera 1d4 + seu mod de conjuração em PVs. Pode ser usada como Ação Bônus!" },
-  { name: "Bênção (Bless)", level: 1, school: "Encantamento", castingTime: "1 ação", range: "9 metros", components: "V, S, M", duration: "Concentração, até 1 minuto", desc: "Você abençoa até três criaturas. Sempre que um alvo fizer uma jogada de ataque ou teste de resistência, adiciona +1d4 ao teste." },
-  { name: "Destruição Cólera (Wrathful Smite)", level: 1, school: "Evocação", castingTime: "1 ação bônus", range: "Pessoal", components: "V", duration: "Concentração, até 1 minuto", damage: "1d6 psíquico", desc: "No seu próximo acerto com arma corpo a corpo, causa +1d6 psíquico e o alvo deve ter sucesso num teste de Sabedoria ou fica Amedrontado até a magia acabar." },
-  { name: "Destruição Trovejante (Thunderous Smite)", level: 1, school: "Evocação", castingTime: "1 ação bônus", range: "Pessoal", components: "V", duration: "Concentração, até 1 minuto", damage: "2d6 trovão", desc: "Seu ataque ressoa com estrondo divino: +2d6 de dano de trovão, empurra o alvo 3 metros para trás e o derruba no chão se falhar em teste de Força." },
-  { name: "Mísseis Mágicos (Magic Missile)", level: 1, school: "Evocação", castingTime: "1 ação", range: "36 metros", components: "V, S", duration: "Instantâneo", damage: "3x (1d4+1) energia", desc: "Você dispara três dardos brilhantes que acertam infalivelmente alvos à sua escolha no alcance. Cada dardo causa 1d4 + 1 de dano de energia." },
-  { name: "Escudo Arcano (Shield)", level: 1, school: "Abjuração", castingTime: "1 reação", range: "Pessoal", components: "V, S", duration: "1 rodada", desc: "Uma barreira invisível bloqueia ataques. Concede +5 de bônus na CA até o início do seu próximo turno, e você não sofre dano de Mísseis Mágicos." },
-  { name: "Onda Trovejante (Thunderwave)", level: 1, school: "Evocação", castingTime: "1 ação", range: "Pessoal (cubo de 4,5m)", components: "V, S", duration: "Instantâneo", damage: "2d8 trovão", desc: "Uma onda de força trovejante irrompe de você. Criaturas no cubo sofrem 2d8 de trovão e são empurradas 3 metros em falha de Constituição." },
-  { name: "Marca do Caçador (Hunter's Mark)", level: 1, school: "Adivinhação", castingTime: "1 ação bônus", range: "27 metros", components: "V", duration: "Concentração, até 1 hora", desc: "Você marca um alvo como sua presa. Você causa +1d6 de dano de arma contra ele sempre que acertar, e tem vantagem em testes para rastreá-lo." },
-  { name: "Fogo das Fadas (Faerie Fire)", level: 1, school: "Evocação", castingTime: "1 ação", range: "18 metros", components: "V, S", duration: "Concentração, até 1 minuto", desc: "Luz colorida contorna todos os objetos e criaturas num cubo de 6m. Ataques contra alvos afetados têm vantagem, e eles não se beneficiam de invisibilidade." },
+  { name: "Curar Ferimentos (Cure Wounds)", level: 1, school: "Evocação", castingTime: "1 ação", range: "Toque", components: "V, S", duration: "Instantâneo", damage: "1d8 + mod", desc: "Uma criatura que você tocar recupera pontos de vida iguais a 1d8 + modificador da sua habilidade de conjuração (+1d8 por nível superior)." },
+  { name: "Palavra Curativa (Healing Word)", level: 1, school: "Evocação", castingTime: "1 ação bônus", range: "18 metros", components: "V", duration: "Instantâneo", damage: "1d4 + mod", desc: "Como Ação Bônus à distância: uma criatura visível recupera 1d4 + seu modificador de conjuração em PVs." },
+  { name: "Bênção (Bless)", level: 1, school: "Encantamento", castingTime: "1 ação", range: "9 metros", components: "V, S, M", duration: "Concentração, até 1 minuto", desc: "Você abençoa até três criaturas. Sempre que um alvo fizer uma jogada de ataque ou teste de resistência, adiciona +1d4 ao resultado." },
+  { name: "Escudo Arcano (Shield)", level: 1, school: "Abjuração", castingTime: "1 reação", range: "Pessoal", components: "V, S", duration: "1 rodada", desc: "Uma barreira invisível bloqueia ataques. Concede +5 de bônus na CA até o início do seu próximo turno, e você é imune ao dardo de Mísseis Mágicos." },
+  { name: "Mísseis Mágicos (Magic Missile)", level: 1, school: "Evocação", castingTime: "1 ação", range: "36 metros", components: "V, S", duration: "Instantâneo", damage: "3x (1d4+1) energia", desc: "Você dispara três dardos que acertam automaticamente os alvos no alcance, sem teste de ataque. Cada dardo causa 1d4 + 1 de energia." },
+  { name: "Armadura Arcana (Mage Armor)", level: 1, school: "Abjuração", castingTime: "1 ação", range: "Toque", components: "V, S, M", duration: "8 horas", desc: "Você toca uma criatura desprovida de armadura. A CA base dela se torna 13 + mod Destreza até o término da magia." },
+  { name: "Mãos Flamejantes (Burning Hands)", level: 1, school: "Evocação", castingTime: "1 ação", range: "Pessoal (cone de 4,5m)", components: "V, S", duration: "Instantâneo", damage: "3d6 fogo", desc: "Chamas irrompem de suas mãos. Cada criatura no cone sofre 3d6 de fogo (salvaguarda de Destreza para metade)." },
+  { name: "Onda Trovejante (Thunderwave)", level: 1, school: "Evocação", castingTime: "1 ação", range: "Pessoal (cubo de 4,5m)", components: "V, S", duration: "Instantâneo", damage: "2d8 trovão", desc: "Onda de som trovejante: criaturas no cubo sofrem 2d8 de trovão e são empurradas 3 metros se falharem em teste de Constituição." },
+  { name: "Bruxaria (Hex)", level: 1, school: "Encantamento", castingTime: "1 ação bônus", range: "27 metros", components: "V, S, M", duration: "Concentração, até 1 hora", damage: "1d6 necrótico", desc: "Você amaldiçoa um alvo. Causa +1d6 necrótico sempre que você acertá-lo com um ataque, e impõe desvantagem em testes de um atributo escolhido." },
+  { name: "Repreensão Infernal (Hellish Rebuke)", level: 1, school: "Evocação", castingTime: "1 reação", range: "18 metros", components: "V, S", duration: "Instantâneo", damage: "2d10 fogo", desc: "Como reação ao sofrer dano de uma criatura visível, chamas do abismo envolvem o agressor: 2d10 de fogo em falha de Destreza (metade em sucesso)." },
+  { name: "Destruição Cólera (Wrathful Smite)", level: 1, school: "Evocação", castingTime: "1 ação bônus", range: "Pessoal", components: "V", duration: "Concentração, até 1 minuto", damage: "1d6 psíquico", desc: "No seu próximo acerto com arma: causa +1d6 psíquico e o alvo deve ter sucesso num teste de Sabedoria ou fica Amedrontado." },
+  { name: "Destruição Trovejante (Thunderous Smite)", level: 1, school: "Evocação", castingTime: "1 ação bônus", range: "Pessoal", components: "V", duration: "Concentração, até 1 minuto", damage: "2d6 trovão", desc: "Seu ataque ressoa com estrondo divino: +2d6 de trovão, empurra o alvo 3m e o derruba no chão (Caído) em falha de Força." },
+  { name: "Marca do Caçador (Hunter's Mark)", level: 1, school: "Adivinhação", castingTime: "1 ação bônus", range: "27 metros", components: "V", duration: "Concentração, até 1 hora", damage: "1d6 arma", desc: "Você marca um alvo como sua presa. Você causa +1d6 de dano de arma contra ele sempre que acertar, e tem vantagem em testes para rastreá-lo." },
+  { name: "Fogo das Fadas (Faerie Fire)", level: 1, school: "Evocação", castingTime: "1 ação", range: "18 metros", components: "V", duration: "Concentração, até 1 minuto", desc: "Luz colorida contorna alvos num cubo de 6m. Ataques contra criaturas afetadas têm vantagem e invisibilidade é anulada." },
+  { name: "Sono (Sleep)", level: 1, school: "Encantamento", castingTime: "1 ação", range: "27 metros", components: "V, S, M", duration: "1 minuto", desc: "Role 5d8. Criaturas numa esfera de 6m adormecem inconscientes em ordem crescente de seus PVs atuais." },
 
   // Nível 2
-  { name: "Arma Espiritual (Spiritual Weapon)", level: 2, school: "Evocação", castingTime: "1 ação bônus", range: "18 metros", components: "V, S", duration: "1 minuto", damage: "1d8 + mod", desc: "Cria uma arma espectral flutuante que ataca inimigos usando ação bônus nos seus turnos subsequentes, causando 1d8 + modificador de conjuração." },
-  { name: "Passo Místico (Misty Step)", level: 2, school: "Conjuração", castingTime: "1 ação bônus", range: "Pessoal", components: "V", duration: "Instantâneo", desc: "Brevemente envolvido em névoa prateada, você se teletransporta instantaneamente até 9 metros para um espaço desocupado visível." },
-  { name: "Raios Ardentes (Scorching Ray)", level: 2, school: "Evocação", castingTime: "1 ação", range: "36 metros", components: "V, S", duration: "Instantâneo", damage: "3x 2d6 fogo", desc: "Você cria três raios de fogo e os arremessa contra alvos no alcance. Faça um ataque mágico para cada raio. Cada acerto causa 2d6 de dano de fogo." },
+  { name: "Passo Místico (Misty Step)", level: 2, school: "Conjuração", castingTime: "1 ação bônus", range: "Pessoal", components: "V", duration: "Instantâneo", desc: "Você se teletransporta instantaneamente até 9 metros para um espaço desocupado que possa ver." },
+  { name: "Arma Espiritual (Spiritual Weapon)", level: 2, school: "Evocação", castingTime: "1 ação bônus", range: "18 metros", components: "V, S", duration: "1 minuto", damage: "1d8 + mod", desc: "Cria uma arma sagrada flutuante que ataca inimigos usando ação bônus nos seus turnos subsequentes, causando 1d8 + mod de conjuração." },
+  { name: "Raios Ardentes (Scorching Ray)", level: 2, school: "Evocação", castingTime: "1 ação", range: "36 metros", components: "V, S", duration: "Instantâneo", damage: "3x 2d6 fogo", desc: "Dispara três raios de fogo contra alvos no alcance. Faça um ataque mágico separado para cada raio. Cada acerto causa 2d6 de fogo." },
+  { name: "Invisibilidade (Invisibility)", level: 2, school: "Ilusão", castingTime: "1 ação", range: "Toque", components: "V, S, M", duration: "Concentração, até 1 hora", desc: "Uma criatura tocada torna-se invisível até a magia acabar. Encerra se a criatura atacar ou conjurar uma magia." },
+  { name: "Imobilizar Pessoa (Hold Person)", level: 2, school: "Encantamento", castingTime: "1 ação", range: "18 metros", components: "V, S, M", duration: "Concentração, até 1 minuto", desc: "Um humanoide visível deve passar em teste de Sabedoria ou fica Paralisado pela duração (ataques a 1,5m são críticos automáticos)." },
+  { name: "Escuridão (Darkness)", level: 2, school: "Evocação", castingTime: "1 ação", range: "18 metros", components: "V, M", duration: "Concentração, até 10 minutos", desc: "Trevas mágicas preenchem uma esfera de 4,5m de raio. Visão no escuro comum não penetra estas trevas e luz comum é apagada." },
+  { name: "Reflexos (Mirror Image)", level: 2, school: "Ilusão", castingTime: "1 ação", range: "Pessoal", components: "V, S", duration: "1 minuto", desc: "Três duplicatas ilusórias perfeitas de você mesmo surgem em seu espaço, desviando ataques automaticamente para as cópias." },
   { name: "Restaurar Menor (Lesser Restoration)", level: 2, school: "Abjuração", castingTime: "1 ação", range: "Toque", components: "V, S", duration: "Instantâneo", desc: "Você toca uma criatura e encerra uma doença ou uma das seguintes condições: cego, surdo, paralisado ou envenenado." },
-  { name: "Imobilizar Pessoa (Hold Person)", level: 2, school: "Encantamento", castingTime: "1 ação", range: "18 metros", components: "V, S, M", duration: "Concentração, até 1 minuto", desc: "Escolha um humanoide visível. Ele deve ter sucesso num teste de Sabedoria ou ficará Paralisado pela duração da magia." },
-  { name: "Invisibilidade (Invisibility)", level: 2, school: "Ilusão", castingTime: "1 ação", range: "Toque", components: "V, S, M", duration: "Concentração, até 1 hora", desc: "Uma criatura tocada torna-se invisível até a magia acabar. Encerra antecipadamente se a criatura atacar ou conjurar uma magia." },
-  { name: "Escuridão (Darkness)", level: 2, school: "Evocação", castingTime: "1 ação", range: "18 metros", components: "V, M", duration: "Concentração, até 10 minutos", desc: "Trevas mágicas preenchem uma esfera de 4,5m de raio. Visão no escuro não penetra estas trevas, e luz não mágica não pode iluminá-la." },
+  { name: "Sugestão (Suggestion)", level: 2, school: "Encantamento", castingTime: "1 ação", range: "9 metros", components: "V, M", duration: "Concentração, até 8 horas", desc: "Você sugere um curso de ação a uma criatura. Se ela falhar em teste de Sabedoria, seguirá o comando à risca por até 8 horas." },
 
   // Nível 3
-  { name: "Bola de Fogo (Fireball)", level: 3, school: "Evocação", castingTime: "1 ação", range: "45 metros", components: "V, S, M", duration: "Instantâneo", damage: "8d6 fogo", desc: "Uma explosão brilhante detona com um estrondo ensurdecedor. Cada criatura numa esfera de 6m de raio deve fazer um teste de Destreza: 8d6 de fogo em falha, metade em sucesso." },
-  { name: "Espíritos Guardiões (Spirit Guardians)", level: 3, school: "Conjuração", castingTime: "1 ação", range: "Pessoal (raio de 4,5m)", components: "V, S, M", duration: "Concentração, até 10 minutos", damage: "3d8 radiante/necrótico", desc: "Espíritos protetores circulam ao seu redor. Criaturas hostis no raio têm deslocamento reduzido pela metade e sofrem 3d8 de dano radiante ao entrar na área." },
-  { name: "Reviver (Revivify)", level: 3, school: "Necromancia", castingTime: "1 ação", range: "Toque", components: "V, S, M (diamantes de 300 po)", duration: "Instantâneo", desc: "Você toca uma criatura que tenha morrido no último minuto. A criatura retorna à vida com 1 ponto de vida." },
-  { name: "Velocidade (Haste)", level: 3, school: "Transmutação", castingTime: "1 ação", range: "9 metros", components: "V, S, M", duration: "Concentração, até 1 minuto", desc: "Dobra o deslocamento do alvo, +2 na CA, vantagem em testes de Destreza e uma ação adicional a cada turno (Atacar, Disparada, etc.)." },
-  { name: "Contramágica (Counterspell)", level: 3, school: "Abjuração", castingTime: "1 reação", range: "18 metros", components: "S", duration: "Instantâneo", desc: "Você interrompe o fluxo de magia de um oponente. Se a criatura estiver conjurando uma magia de 3º nível ou inferior, a magia dela falha instantaneamente." },
+  { name: "Bola de Fogo (Fireball)", level: 3, school: "Evocação", castingTime: "1 ação", range: "45 metros", components: "V, S, M", duration: "Instantâneo", damage: "8d6 fogo", desc: "Explosão flamejante detona numa esfera de 6 metros de raio. Criaturas sofrem 8d6 de dano de fogo (salvaguarda de Destreza para metade)." },
+  { name: "Relâmpago (Lightning Bolt)", level: 3, school: "Evocação", castingTime: "1 ação", range: "Pessoal (linha de 30m x 1,5m)", components: "V, S, M", duration: "Instantâneo", damage: "8d6 elétrico", desc: "Um raio de eletricidade potente rasga uma linha reta de 30 metros. Criaturas na linha sofrem 8d6 elétrico (salvaguarda de Destreza para metade)." },
+  { name: "Espíritos Guardiões (Spirit Guardians)", level: 3, school: "Conjuração", castingTime: "1 ação", range: "Pessoal (raio de 4,5m)", components: "V, S, M", duration: "Concentração, até 10 minutos", damage: "3d8 radiante/necrótico", desc: "Espíritos ancestrais voam ao seu redor. Inimigos na área têm deslocamento reduzido pela metade e sofrem 3d8 de dano radiante ao entrar na área." },
+  { name: "Reviver (Revivify)", level: 3, school: "Necromancia", castingTime: "1 ação", range: "Toque", components: "V, S, M (diamantes de 300 po)", duration: "Instantâneo", desc: "Você toca uma criatura morta no último minuto. A criatura volta à vida imediatamente com 1 ponto de vida." },
+  { name: "Velocidade (Haste)", level: 3, school: "Transmutação", castingTime: "1 ação", range: "9 metros", components: "V, S, M", duration: "Concentração, até 1 minuto", desc: "Dobra o deslocamento do alvo, +2 na CA, vantagem em testes de Destreza e ganha uma ação adicional em cada turno." },
+  { name: "Voo (Fly)", level: 3, school: "Transmutação", castingTime: "1 ação", range: "Toque", components: "V, S, M", duration: "Concentração, até 10 minutos", desc: "A criatura tocada ganha deslocamento de voo de 18 metros até o fim da magia." },
+  { name: "Contramágica (Counterspell)", level: 3, school: "Abjuração", castingTime: "1 reação", range: "18 metros", components: "S", duration: "Instantâneo", desc: "Como reação, você anula o feitiço de um conjurador. Se a magia for de 3º nível ou menor, ela falha automaticamente." },
   { name: "Dissipar Magia (Dispel Magic)", level: 3, school: "Abjuração", castingTime: "1 ação", range: "36 metros", components: "V, S", duration: "Instantâneo", desc: "Escolha uma criatura, objeto ou efeito mágico. Qualquer magia de 3º nível ou inferior sobre o alvo termina imediatamente." }
 ];
 
+// 7. PODERES DE CLASSE OFICIAIS (Capítulo 3)
 export const CLASS_FEATURES_DB = {
   "Paladino": [
     { name: "Sentido Divino", level: 1, desc: "Sua percepção detecta o mal e bem concentrado. Como uma ação, você sabe a localização de qualquer celestial, corruptor ou morto-vivo a até 18 metros que não esteja atrás de cobertura total. Usos = 1 + mod Carisma por descanso longo." },
@@ -286,13 +339,11 @@ export const CLASS_FEATURES_DB = {
     { name: "Aura de Proteção", level: 6, desc: "Sempre que você ou uma criatura amigável a até 3 metros de você tiver que fazer um teste de resistência, o alvo ganha um bônus no teste igual ao seu modificador de Carisma (mínimo de +1)." },
     { name: "Aura de Coragem", level: 10, desc: "Você e criaturas amigáveis a até 3 metros de você não podem ficar amedrontados enquanto você estiver consciente." }
   ],
-  "Feiticeiro": [
-    { name: "Origem Dracônica: Ancestralidade Dracônica", level: 1, desc: "Você escolhe o tipo de dragão do seu sangue (ex: Vermelho = Fogo, Azul = Eletricidade, Branco = Frio, Preto = Ácido, Ouro = Fogo). Você aprende a falar, ler e escrever Dracônico." },
-    { name: "Origem Dracônica: Resiliência Dracônica", level: 1, desc: "Sua pele ganha escamas finas protetoras. Seus pontos de vida máximos aumentam em 1 para cada nível de Feiticeiro. Sem armadura, sua CA base passa a ser 13 + seu modificador de Destreza!" },
-    { name: "Fonte de Magia (Pontos de Feitiçaria)", level: 2, desc: "Você ganha Pontos de Feitiçaria iguais ao seu nível de feiticeiro. Pode gastar pontos para criar espaços de magia adicionais ou converter espaços em pontos." },
-    { name: "Metamagia", level: 3, desc: "Você molda suas magias: Magia Acelerada (conjura magia de ação como ação bônus), Magia Gêmea (alvo duplo), Magia Sutil (sem componentes V ou S), Magia Potencializada." },
-    { name: "Afinidade Elemental Dracônica", level: 6, desc: "Ao conjurar uma magia que cause o dano do seu tipo de dragão, adicione seu modificador de Carisma a uma jogada de dano da magia. Pode gastar 1 ponto de feitiçaria para ganhar resistência ao elemento por 1 hora." },
-    { name: "Asas de Dragão", level: 14, desc: "Você brota um par de asas de dragão das suas costas, ganhando deslocamento de voo igual ao seu deslocamento terrestre." }
+  "Bruxo": [
+    { name: "Patrono Transcendental", level: 1, desc: "Você firma um pacto com uma entidade cósmica: Corruptor (Vitalidade das Trevas), Arquifada (Presença Feérica) ou Grande Antigo (Telepatia Desperta)." },
+    { name: "Magia de Pacto", level: 1, desc: "Seus espaços de magia são sempre lançados no círculo máximo disponível e são 100% recarregados após um Descanso Curto (1 hora)!" },
+    { name: "Invocações Místicas", level: 2, desc: "Você descobre segredos ocultos: Rajada Agonizante (+ mod CAR no dano da Rajada Mística), Visão do Diabo (enxerga na escuridão mágica até 24m), Armadura das Sombras (Armadura Arcana à vontade)." },
+    { name: "Pacto de Dádiva (Nível 3)", level: 3, desc: "Seu patrono lhe concede uma dádiva: Pacto da Lâmina (cria arma mágica que usa proficiência), Pacto da Corrente (familiar aprimorado como diabrete ou pseudodragão) ou Pacto do Tomo (Livro das Sombras com 3 truques de qualquer classe)." }
   ],
   "Guerreiro": [
     { name: "Retomar o Fôlego (Second Wind)", level: 1, desc: "Você possui uma reserva de vigor que pode usar para se proteger do perigo. No seu turno, você pode usar uma ação bônus para recuperar PVs iguais a 1d10 + seu nível de guerreiro. Recarrega com descanso curto ou longo." },
@@ -339,35 +390,40 @@ export const CLASS_FEATURES_DB = {
     { name: "Inimigo Favorito & Explorador Natural", level: 1, desc: "Vantagem em rastrear e recordar informações sobre seus tipos favoritos de criaturas e em navegar pelo seu terreno escolhido." },
     { name: "Consciência Primitiva", level: 3, desc: "Sinta a presença de aberrações, celestiais, dragões, elementais e mortos-vivos no raio de até 1,5 km." }
   ],
-  "Bruxo": [
-    { name: "Patrono Transcendental", level: 1, desc: "Você firma um pacto com um ser de outro mundo: Corruptor, Arquifada ou Grande Antigo." },
-    { name: "Magia de Pacto", level: 1, desc: "Seus espaços de magia são sempre do maior nível que você pode conjurar e são restaurados após descansos curtos!" },
-    { name: "Invocações Místicas", level: 2, desc: "Você descobre segredos proibidos: Rajada Agonizante (+ mod CAR no dano do Eldritch Blast), Visão do Diabo (enxerga na escuridão mágica), Armadura das Sombras." }
+  "Feiticeiro": [
+    { name: "Origem de Feitiçaria", level: 1, desc: "Você escolhe sua linhagem inata: Ancestralidade Dracônica ou Magia Selvagem." },
+    { name: "Fonte de Magia (Pontos de Feitiçaria)", level: 2, desc: "Pontos de energia mística flexível que você pode converter em novos espaços de magia ou usar para ativar Metamagia." },
+    { name: "Metamagia", level: 3, desc: "Molda suas magias no momento do lançamento: Magia Acelerada, Magia Gêmea, Magia Sutil ou Potencializada." }
   ]
 };
 
+// 8. TODAS AS 15 CONDIÇÕES OFICIAIS (Apêndice A: Págs 291-293)
 export const CONDITIONS_DB = [
-  { name: "Amedrontado (Frightened)", desc: "Desvantagem em testes de habilidade e jogadas de ataque enquanto a fonte do medo estiver na sua linha de visão. Não pode se aproximar voluntariamente da fonte." },
-  { name: "Agarrado (Grappled)", desc: "O deslocamento se torna 0 e não se beneficia de bônus de velocidade. A condição encerra se o agarrador ficar incapacitado." },
-  { name: "Caído (Prone)", desc: "A criatura só pode rastejar, a menos que se levante gastando metade do deslocamento. Ataques contra ela a 1,5m têm vantagem; ataques à distância têm desvantagem." },
-  { name: "Cego (Blinded)", desc: "A criatura não pode ver e falha automaticamente em testes que requeiram visão. Jogadas de ataque contra ela têm vantagem; seus ataques têm desvantagem." },
-  { name: "Enfeitiçado (Charmed)", desc: "A criatura enfeitiçada não pode atacar o encantador ou mirá-lo com habilidades danosas. O encantador tem vantagem em testes sociais contra ela." },
-  { name: "Envenenado (Poisoned)", desc: "A criatura sofre desvantagem em jogadas de ataque e testes de habilidade." },
-  { name: "Incapacitado (Incapacitated)", desc: "Uma criatura incapacitada não pode realizar ações ou reações." },
-  { name: "Inconsciente (Unconscious)", desc: "A criatura cai no chão, solta o que estiver segurando, fica incapacitada e falha automaticamente em testes de Força e Destreza. Ataques a 1,5m que acertam são críticos automáticos!" },
-  { name: "Invisível (Invisible)", desc: "Impossível de ser vista sem magia ou sentidos especiais. Ataques contra ela têm desvantagem; seus ataques têm vantagem." },
-  { name: "Paralisado (Paralyzed)", desc: "Fica incapacitada, não pode se mover ou falar, falha automaticamente em salvaguardas de Força e Destreza. Ataques contra ela têm vantagem e a até 1,5m são críticos automáticos." },
-  { name: "Petrificado (Petrified)", desc: "Transformada em pedra sólida. O peso se multiplica por 10, fica incapacitada, cessa envelhecimento e tem resistência a todos os danos." },
-  { name: "Preso / Contido (Restrained)", desc: "Deslocamento 0. Seus ataques sofrem desvantagem; ataques contra ela têm vantagem. Desvantagem em testes de resistência de Destreza." },
-  { name: "Surdo (Deafened)", desc: "A criatura não pode ouvir e falha automaticamente em qualquer teste de habilidade que requeira audição." }
+  { name: "Amedrontado (Frightened)", desc: "Desvantagem em testes de habilidade e jogadas de ataque enquanto a fonte do medo estiver na sua linha de visão. Não pode se aproximar voluntariamente da fonte do seu medo." },
+  { name: "Agarrado (Grappled)", desc: "O deslocamento de uma criatura agarrada se torna 0 e não pode se beneficiar de qualquer bônus em sua velocidade. A condição encerra se o agarrador ficar incapacitado ou se um efeito afastar a criatura do alcance." },
+  { name: "Caído (Prone)", desc: "A única opção de movimento é rastejar, a menos que se levante gastando metade do deslocamento. A criatura sofre desvantagem nas jogadas de ataque. Ataques contra ela têm vantagem se o atacante estiver a até 1,5m; caso contrário, têm desvantagem." },
+  { name: "Cego (Blinded)", desc: "A criatura não pode ver e falha automaticamente em qualquer teste de habilidade que requeira a visão. Jogadas de ataque contra a criatura têm vantagem, e os ataques da criatura sofrem desvantagem." },
+  { name: "Enfeitiçado (Charmed)", desc: "A criatura enfeitiçada não pode atacar o encantador ou mirá-lo com habilidades danosas ou mágicas. O encantador tem vantagem em qualquer teste de habilidade para interagir socialmente com a criatura." },
+  { name: "Envenenado (Poisoned)", desc: "Uma criatura envenenada sofre desvantagem em jogadas de ataque e testes de habilidade." },
+  { name: "Exaustão (Exhaustion)", desc: "Possui 6 níveis cumulativos: 1. Desvantagem em testes de habilidade; 2. Deslocamento reduzido pela metade; 3. Desvantagem em ataques e salvaguardas; 4. Pontos de vida máximos reduzidos pela metade; 5. Deslocamento 0; 6. Morte imediata. Um descanso longo remove 1 nível de exaustão." },
+  { name: "Impedido / Contido (Restrained)", desc: "O deslocamento se torna 0. Jogadas de ataque contra a criatura têm vantagem, e os ataques da criatura sofrem desvantagem. A criatura sofre desvantagem em salvaguardas de Destreza." },
+  { name: "Incapacitado (Incapacitated)", desc: "Uma criatura incapacitada não pode realizar ações ou reações de nenhuma espécie." },
+  { name: "Inconsciente (Unconscious)", desc: "A criatura fica incapacitada, não pode se mover ou falar, e não tem ciência dos arredores. Larga o que estiver segurando e cai no chão. Falha automaticamente em salvaguardas de Força e Destreza. Ataques contra ela têm vantagem e qualquer ataque a até 1,5m que acertar é acerto crítico automático." },
+  { name: "Invisível (Invisible)", desc: "Impossível de ser vista sem o auxílio de magia ou sentido especial. Para o propósito de se esconder, a criatura é considerada em área de escuridão densa. Ataques contra a criatura sofrem desvantagem; ataques da criatura têm vantagem." },
+  { name: "Paralisado (Paralyzed)", desc: "Uma criatura paralisada fica incapacitada e não pode se mover ou falar. Falha automaticamente em salvaguardas de Força e Destreza. Ataques contra a criatura têm vantagem e qualquer ataque a até 1,5m é crítico automático." },
+  { name: "Petrificado (Petrified)", desc: "A criatura é transformada em pedra sólida. Seu peso aumenta 10 vezes e ela para de envelhecer. Fica incapacitada, falha em salvaguardas de FOR e DES, tem resistência a todos os danos e fica imune a veneno e doenças." },
+  { name: "Surdo (Deafened)", desc: "A criatura não pode ouvir e falha automaticamente em qualquer teste de habilidade que requeira a audição." }
 ];
 
+// 9. TALENTOS OFICIAIS (Capítulo 6: Págs 167-171)
 export const FEATS_DB = [
-  { name: "Alerta (Alert)", desc: "+5 de bônus na iniciativa. Você não pode ser surpreendido enquanto estiver consciente, e outras criaturas não ganham vantagem ao atacar você escondidas." },
-  { name: "Combatente Montado", desc: "Vantagem em ataques corpo a corpo contra criaturas não montadas menores que sua montaria." },
-  { name: "Conjurador de Guerra (War Caster)", desc: "Vantagem em testes de resistência de Constituição para manter concentração em magias. Pode usar magia como ataque de oportunidade e realizar gestos mesmo empunhando armas e escudo." },
-  { name: "Mestre em Armas Grandes (Great Weapon Master)", desc: "Ao acertar um crítico ou reduzir inimigo a 0 PV, ganha um ataque corpo a corpo bônus. Pode escolher sofrer -5 no ataque para causar +10 de dano!" },
-  { name: "Franco-Atirador (Sharpshooter)", desc: "Seus ataques com armas à distância ignoram meia cobertura e três quartos de cobertura. Atacar no alcance máximo não impõe desvantagem. Pode sofrer -5 no ataque para ganhar +10 de dano." },
-  { name: "Resiliente (Resilient)", desc: "Aumente um valor de atributo à sua escolha em 1 e ganhe proficiência nos testes de resistência com esse atributo." },
-  { name: "Sortudo (Lucky)", desc: "Você tem 3 pontos de sorte para gastar e rolar um d20 extra em ataques, testes ou salvaguardas, escolhendo qual resultado usar." }
+  { name: "Alerta (Alert)", desc: "+5 de bônus na iniciativa. Você não pode ser surpreendido enquanto estiver consciente, e outras criaturas não ganham vantagem em jogadas de ataque contra você como resultado de estarem escondidas." },
+  { name: "Combatente Montado", desc: "Você tem vantagem em jogadas de ataque corpo a corpo contra criaturas não montadas menores que sua montaria. Se a montaria passar em salvaguarda de Destreza para metade do dano, não sofre dano nenhum." },
+  { name: "Conjurador de Guerra (War Caster)", desc: "Vantagem em salvaguardas de Constituição para manter concentração em magias. Pode realizar componentes somáticos mesmo empunhando armas e escudo. Pode lançar magia em vez de golpe corpo a corpo em ataque de oportunidade." },
+  { name: "Mestre em Armas Grandes (Great Weapon Master)", desc: "Ao obter um acerto crítico com arma corpo a corpo ou reduzir inimigo a 0 PV, pode realizar um ataque com arma corpo a corpo com ação bônus. Antes de desferir ataque com arma pesada, pode escolher sofrer -5 no ataque para somar +10 de dano!" },
+  { name: "Franco-Atirador (Sharpshooter)", desc: "Atacar no alcance máximo de armas à distância não impõe desvantagem. Seus ataques ignoram meia cobertura e três quartos de cobertura. Pode escolher sofrer -5 no ataque com arma à distância para somar +10 de dano." },
+  { name: "Sentinela (Sentinel)", desc: "Ao acertar uma criatura com ataque de oportunidade, o deslocamento dela se torna 0 pelo resto do turno. Criaturas provocam ataque de oportunidade mesmo usando a ação Desengajar. Pode usar reação para atacar criatura que golpeie um aliado próximo." },
+  { name: "Sortudo (Lucky)", desc: "Você tem 3 pontos de sorte por descanso longo. Pode gastar 1 ponto para rolar um d20 adicional sempre que fizer uma jogada de ataque, teste de habilidade ou salvaguarda, escolhendo qual d20 utilizar." },
+  { name: "Mestre das Armaduras Pesadas", desc: "Aumente sua Força em 1. Enquanto estiver usando armadura pesada, o dano concussão, cortante e perfurante não mágico que você sofre é reduzido em 3." },
+  { name: "Resiliente (Resilient)", desc: "Aumente um atributo à sua escolha em 1 (máx 20). Você ganha proficiência nas salvaguardas que utilizam o atributo escolhido." }
 ];

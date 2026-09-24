@@ -405,6 +405,64 @@ export default function App() {
             }
           }));
         }}
+        onAddEquipment={(item) => {
+          setCharacter(prev => {
+            const existing = prev.equipmentText ? prev.equipmentText.trim() : "";
+            const itemLine = `${item.name} (${item.cost || ""}${item.weight ? ", " + item.weight : ""})${item.desc ? " - " + item.desc : ""}`;
+            const newText = existing ? `${existing}\n• ${itemLine}` : `• ${itemLine}`;
+            return { ...prev, equipmentText: newText };
+          });
+        }}
+        onApplyBackground={(bg) => {
+          setCharacter(prev => {
+            const existingFeatures = prev.featuresText ? prev.featuresText.trim() : "";
+            const newFeatures = existingFeatures 
+              ? `${existingFeatures}\n\n[Antecedente: ${bg.name}]\n${bg.feature}`
+              : `[Antecedente: ${bg.name}]\n${bg.feature}`;
+            
+            const existingEquip = prev.equipmentText ? prev.equipmentText.trim() : "";
+            const newEquip = existingEquip
+              ? `${existingEquip}\n\n[Equipamento de ${bg.name}]:\n${bg.equipment}`
+              : `[Equipamento de ${bg.name}]:\n${bg.equipment}`;
+
+            const updatedSkills = { ...(prev.skills || {}) };
+            const skillsMap = {
+              "Acrobacia": "acrobatics",
+              "Arcanismo": "arcana",
+              "Atletismo": "athletics",
+              "Atuação": "performance",
+              "Enganação": "deception",
+              "Furtividade": "stealth",
+              "História": "history",
+              "Intimidação": "intimidation",
+              "Intuição": "insight",
+              "Investigação": "investigation",
+              "Lidar com Animais": "animalHandling",
+              "Medicina": "medicine",
+              "Natureza": "nature",
+              "Percepção": "perception",
+              "Persuasão": "persuasion",
+              "Prestidigitação": "sleightOfHand",
+              "Religião": "religion",
+              "Sobrevivência": "survival"
+            };
+            if (bg.skills) {
+              Object.entries(skillsMap).forEach(([name, key]) => {
+                if (bg.skills.toLowerCase().includes(name.toLowerCase())) {
+                  updatedSkills[key] = true;
+                }
+              });
+            }
+
+            return {
+              ...prev,
+              background: bg.name,
+              featuresText: newFeatures,
+              equipmentText: newEquip,
+              skills: updatedSkills
+            };
+          });
+        }}
       />
 
       <DiceRoller 
