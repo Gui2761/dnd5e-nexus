@@ -1,6 +1,6 @@
 import React from "react";
 import { Sparkles } from "lucide-react";
-import { getAbilityModifier, getProficiencyBonus, CLASS_SPELL_ABILITY } from "../utils/dndCalc";
+import { getAbilityModifier, getProficiencyBonus, CLASS_SPELL_ABILITY, CLASS_HIT_DICE } from "../utils/dndCalc";
 
 export const CLASS_LORE = {
   "Bruxo": {
@@ -361,9 +361,14 @@ export default function ClassFlank({ className = "Guerreiro", character }) {
         <span className="text-[10px] uppercase font-bold tracking-widest text-white/50">
           Ordem & Vocação
         </span>
-        <h3 className="font-serif font-black text-xl text-white tracking-wide" style={{ color: data.color }}>
-          {data.title}
-        </h3>
+        <div className="flex items-center gap-2 justify-center">
+          <h3 className="font-serif font-black text-xl text-white tracking-wide" style={{ color: data.color }}>
+            {data.title}
+          </h3>
+          <span className="text-[10px] font-mono font-black px-2 py-0.5 rounded-full bg-white/10 text-amber-300 border border-white/10">
+            Nível {character?.level || 1}
+          </span>
+        </div>
         <p className="text-[11px] text-white/60 italic mt-0.5">
           {data.sub}
         </p>
@@ -377,8 +382,10 @@ export default function ClassFlank({ className = "Guerreiro", character }) {
       {/* Estatísticas Fundamentais */}
       <div className="space-y-1.5 text-xs pb-3 border-b border-white/10">
         <div className="flex justify-between items-center py-1 px-2 rounded-lg bg-white/5">
-          <span className="text-[11px] text-white/50 font-medium">Dado de Vida:</span>
-          <span className="font-bold text-amber-300 font-mono text-[11px]">{data.hitDie}</span>
+          <span className="text-[11px] text-white/50 font-medium">Dados de Vida:</span>
+          <span className="font-bold text-amber-300 font-mono text-[11px]">
+            {character?.hitDiceTotal || `${character?.level || 1}${CLASS_HIT_DICE[data.title] || "d8"}`}
+          </span>
         </div>
         <div className="flex justify-between items-center py-1 px-2 rounded-lg bg-white/5">
           <span className="text-[11px] text-white/50 font-medium">Atributo Chave:</span>

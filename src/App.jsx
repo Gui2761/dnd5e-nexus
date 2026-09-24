@@ -11,9 +11,10 @@ import { DEFAULT_CHARACTER } from "./data/initialCharacter";
 import { getThemeForClass } from "./utils/theme";
 import { decompressCharacterFromUrl } from "./utils/sync";
 import { deleteCharacterFromCloud } from "./utils/cloudSync";
+import LevelUpModal from "./components/LevelUpModal";
 import { 
   BookOpen, Dices, Save, Printer, ZoomIn, ZoomOut, Maximize2, 
-  Check, Users, Trash2 
+  Check, Users, Trash2, TrendingUp 
 } from "lucide-react";
 
 export default function App() {
@@ -59,6 +60,7 @@ export default function App() {
   const [isDiceRollerOpen, setIsDiceRollerOpen] = useState(false);
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isPartyMenuOpen, setIsPartyMenuOpen] = useState(false);
+  const [isLevelUpModalOpen, setIsLevelUpModalOpen] = useState(false);
   const [saveToast, setSaveToast] = useState(false);
   const [quickRollNotification, setQuickRollNotification] = useState(null);
 
@@ -202,6 +204,16 @@ export default function App() {
                 ))}
               </select>
             </div>
+
+            {/* Indicador e Atalho de Nível */}
+            <button
+              onClick={() => setIsLevelUpModalOpen(true)}
+              className="px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30 hover:bg-amber-400/30 transition-all flex items-center gap-1.5 shadow-sm active:scale-95"
+              title="Gerenciar Subida de Nível e Poderes Desbloqueados"
+            >
+              <TrendingUp size={13} className="text-amber-400" />
+              <span>Nível {character.level || 1}</span>
+            </button>
 
             {/* Botão de Mesa Online / Fichas do Grupo */}
             <button
@@ -484,6 +496,14 @@ export default function App() {
         onClose={() => setIsPartyMenuOpen(false)}
         currentCharacter={character}
         onSelectCharacter={(newChar) => setCharacter(newChar)}
+        currentTheme={currentTheme}
+      />
+
+      <LevelUpModal
+        isOpen={isLevelUpModalOpen}
+        onClose={() => setIsLevelUpModalOpen(false)}
+        character={character}
+        setCharacter={setCharacter}
         currentTheme={currentTheme}
       />
 

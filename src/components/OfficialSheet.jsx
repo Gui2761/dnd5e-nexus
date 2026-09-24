@@ -1,7 +1,12 @@
 import React, { useState, useMemo } from "react";
-import { getAbilityModifier, formatModifier, getProficiencyBonus, ABILITIES, SKILLS } from "../utils/dndCalc";
+import { 
+  getAbilityModifier, formatModifier, getProficiencyBonus, 
+  calculateCanonicalHP, XP_TABLE, getNextLevelXP, 
+  getSlotsForClassAndLevel, CLASS_HIT_DICE, ABILITIES, SKILLS 
+} from "../utils/dndCalc";
 import { WEAPONS, CLASS_FEATURES_DB, SPELLS_DATABASE } from "../data/compendium";
-import { Trash2, Plus, Sparkles, BookOpen, Edit3, Check } from "lucide-react";
+import { Trash2, Plus, Sparkles, BookOpen, Edit3, Check, TrendingUp, Star } from "lucide-react";
+import LevelUpModal from "./LevelUpModal";
 
 // Helper para parser de Habilidades
 function parseFeatures(text) {
@@ -62,6 +67,7 @@ export default function OfficialSheet({
   const [isEditingProficienciesText, setIsEditingProficienciesText] = useState(false);
   const [isEditingFeaturesText, setIsEditingFeaturesText] = useState(false);
   const [isEditingAttackNotes, setIsEditingAttackNotes] = useState(false);
+  const [isLevelUpModalOpen, setIsLevelUpModalOpen] = useState(false);
 
   const parsedFeaturesList = useMemo(() => {
     return parseFeatures(character.featuresText);
@@ -124,6 +130,33 @@ export default function OfficialSheet({
     const rawLines = character.attackNotes ? character.attackNotes.split("\n").filter(Boolean) : [];
     rawLines.push("Nova anotação de combate, magia ou munição");
     setCharacter(prev => ({ ...prev, attackNotes: rawLines.join("\n") }));
+  };
+
+  const handleLevelChange = (newLvl) => {
+    const lvl = Math.min(20, Math.max(1, parseInt(newLvl, 10) || 1));
+    const className = character.className || "Guerreiro";
+    const hitDie = CLASS_HIT_DICE[className] || "d8";
+    const newHitDiceTotal = `${lvl}${hitDie}`;
+    const newHP = calculateCanonicalHP(className, lvl, character.stats?.con || 10);
+    const minXP = XP_TABLE[lvl] || 0;
+    const currentXP = character.xp || 0;
+    const finalXP = currentXP < minXP ? minXP : currentXP;
+    const updatedSlots = getSlotsForClassAndLevel(className, lvl, character.spellcasting?.slots);
+
+    setCharacter(prev => ({
+      ...prev,
+      level: lvl,
+      profBonusOverride: undefined, // Limpa override para que o recálculo canônico tome posse imediatamente!
+      hitDiceTotal: newHitDiceTotal,
+      hitDiceCurrent: newHitDiceTotal,
+      hpMax: newHP,
+      hpCurrent: prev.hpCurrent === prev.hpMax ? newHP : Math.min(newHP, prev.hpCurrent + Math.max(0, newHP - prev.hpMax)),
+      xp: finalXP,
+      spellcasting: {
+        ...prev.spellcasting,
+        slots: updatedSlots
+      }
+    }));
   };
 
   // Manipuladores de Atributos
@@ -358,23 +391,60 @@ export default function OfficialSheet({
 
           {/* Lado Direito: Quadro de Informações do Personagem (2x3) */}
           <div className="w-[500px] border-2 border-neutral-800 rounded-md p-2 bg-neutral-50 grid grid-cols-3 grid-rows-2 gap-x-3 gap-y-1">
-            {/* Classe e Nível */}
-            <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5">
-              <input
-                type="text"
-                value={`${character.className} ${character.level}`}
-                onChange={(e) => {
-                  const parts = e.target.value.split(" ");
-                  const lvl = parseInt(parts[parts.length - 1], 10);
-                  if (!isNaN(lvl)) {
-                    setCharacter({ ...character, level: lvl, className: parts.slice(0, -1).join(" ") });
-                  } else {
-                    setCharacter({ ...character, className: e.target.value });
-                  }
-                }}
-                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate"
-              />
-              <span className="text-[7.5px] font-extrabold uppercase text-neutral-500">CLASSE E NÍVEL</span>
+            {/* Classe e Nível com Seletor Canônico */}
+            <div className="flex items-end justify-between border-b border-neutral-400 pb-0.5 gap-1">
+              <div className="flex-1 min-w-0">
+                <input
+                  type="text"
+                  value={character.className}
+                  onChange={(e) => setCharacter({ ...character, className: e.target.value })}
+                  className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate w-full"
+                  placeholder="Classe"
+                />
+                <span className="text-[7px] font-extrabold uppercase text-neutral-500 block">CLASSE</span>
+              </div>
+              
+              <div className="flex items-center gap-0.5 bg-white border border-neutral-300 rounded px-1 py-0.5 shadow-xs mb-0.5 flex-shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleLevelChange((character.level || 1) - 1)}
+                  disabled={(character.level || 1) <= 1}
+                  className="w-3.5 h-3.5 rounded bg-neutral-100 hover:bg-neutral-200 disabled:opacity-30 text-neutral-700 text-[9px] font-black flex items-center justify-center select-none"
+                  title="Diminuir Nível"
+                >
+                  -
+                </button>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={character.level}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value, 10);
+                    if (!isNaN(val)) handleLevelChange(val);
+                  }}
+                  className="w-5 text-center font-black text-xs text-amber-900 bg-transparent focus:outline-none font-mono"
+                  title="Nível do Personagem (1 a 20)"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleLevelChange((character.level || 1) + 1)}
+                  disabled={(character.level || 1) >= 20}
+                  className="w-3.5 h-3.5 rounded bg-amber-100 hover:bg-amber-200 disabled:opacity-30 text-amber-900 text-[9px] font-black flex items-center justify-center select-none"
+                  title="Aumentar Nível"
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsLevelUpModalOpen(true)}
+                  className="ml-0.5 text-[8px] px-1 py-0.5 rounded bg-amber-400 text-black font-extrabold hover:bg-amber-300 transition-all shadow-xs flex items-center gap-0.5"
+                  title="Painel de Subida de Nível & Poderes"
+                >
+                  <TrendingUp size={9} />
+                  <span>Nv</span>
+                </button>
+              </div>
+              <span className="text-[7px] font-extrabold uppercase text-neutral-500 self-end mb-0.5">NÍVEL</span>
             </div>
 
             {/* Antecedente */}
@@ -421,15 +491,32 @@ export default function OfficialSheet({
               <span className="text-[7.5px] font-extrabold uppercase text-neutral-500">TENDÊNCIA</span>
             </div>
 
-            {/* Pontos de Experiência */}
+            {/* Pontos de Experiência com Meta para o Próximo Nível */}
             <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5">
-              <input
-                type="number"
-                value={character.xp}
-                onChange={(e) => setCharacter({ ...character, xp: parseInt(e.target.value, 10) || 0 })}
-                className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate font-mono"
-              />
-              <span className="text-[7.5px] font-extrabold uppercase text-neutral-500">PONTOS DE EXPERIÊNCIA</span>
+              <div className="flex items-center justify-between gap-1">
+                <input
+                  type="number"
+                  value={character.xp}
+                  onChange={(e) => setCharacter({ ...character, xp: parseInt(e.target.value, 10) || 0 })}
+                  className="text-xs font-bold text-neutral-900 bg-transparent focus:outline-none truncate font-mono w-16"
+                />
+                <span className="text-[6.5px] text-neutral-400 font-mono truncate" title="Meta para o próximo nível">
+                  / {getNextLevelXP(character.level).toLocaleString("pt-BR")} XP
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-[7.5px] font-extrabold uppercase text-neutral-500">PONTOS DE EXPERIÊNCIA</span>
+                {character.xp >= getNextLevelXP(character.level) && (character.level || 1) < 20 && (
+                  <button
+                    type="button"
+                    onClick={() => handleLevelChange((character.level || 1) + 1)}
+                    className="text-[6.5px] font-black text-amber-900 bg-amber-300 px-1 rounded shadow-xs hover:bg-amber-400 transition-colors animate-pulse"
+                    title="XP suficiente para subir de nível! Clique para avançar."
+                  >
+                    ⭐ Subir p/ Nv {(character.level || 1) + 1}
+                  </button>
+                )}
+              </div>
             </div>
           </div>
 
@@ -1369,6 +1456,15 @@ export default function OfficialSheet({
         </div>
 
       </div>
+
+      {/* Modal Canônico de Subida de Nível & Desbloqueio de Poderes */}
+      <LevelUpModal
+        isOpen={isLevelUpModalOpen}
+        onClose={() => setIsLevelUpModalOpen(false)}
+        character={character}
+        setCharacter={setCharacter}
+        currentTheme={currentTheme}
+      />
     </div>
   );
 }
