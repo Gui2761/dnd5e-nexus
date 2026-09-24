@@ -46,7 +46,14 @@ export default function OfficialSheet({
   onQuickRoll,
   zoomScale
 }) {
-  const profBonus = getProficiencyBonus(character.level);
+  const profBonus = useMemo(() => {
+    if (character.profBonusOverride !== undefined && character.profBonusOverride !== null && character.profBonusOverride !== "") {
+      const parsed = parseInt(String(character.profBonusOverride).replace("+", ""), 10);
+      if (!isNaN(parsed)) return parsed;
+    }
+    return getProficiencyBonus(character.level || 1);
+  }, [character.profBonusOverride, character.level]);
+
   const [weaponSearchQuery, setWeaponSearchQuery] = useState("");
   const [activeWeaponSearchRowId, setActiveWeaponSearchRowId] = useState(null);
   const [featureSearchQuery, setFeatureSearchQuery] = useState("");
@@ -476,13 +483,17 @@ export default function OfficialSheet({
                 <div className="border-[1.5px] border-neutral-800 rounded-md px-2 py-1 flex items-center gap-2 bg-neutral-50 h-7">
                   <input
                     type="text"
-                    value={character.profBonusOverride !== undefined ? character.profBonusOverride : `+${profBonus}`}
+                    value={character.profBonusOverride !== undefined && character.profBonusOverride !== null && character.profBonusOverride !== "" ? character.profBonusOverride : (profBonus >= 0 ? `+${profBonus}` : `${profBonus}`)}
                     onChange={(e) => {
-                      const val = parseInt(e.target.value.replace("+", ""), 10);
-                      setCharacter({ ...character, profBonusOverride: isNaN(val) ? e.target.value : val });
+                      const raw = e.target.value;
+                      if (raw === "") {
+                        setCharacter({ ...character, profBonusOverride: "" });
+                        return;
+                      }
+                      setCharacter({ ...character, profBonusOverride: raw });
                     }}
                     className="w-7 h-5 rounded-full border border-neutral-800 text-center font-bold text-xs bg-white font-mono focus:outline-none"
-                    title="Bônus de Proficiência (editável)"
+                    title="Bônus de Proficiência (editável: ex: +2, +3, +4)"
                   />
                   <span className="text-[7.5px] font-extrabold uppercase text-neutral-600">BÔNUS DE PROFICIÊNCIA</span>
                 </div>
