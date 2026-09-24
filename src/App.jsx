@@ -10,9 +10,10 @@ import PartyHub from "./components/PartyHub";
 import { DEFAULT_CHARACTER } from "./data/initialCharacter";
 import { getThemeForClass } from "./utils/theme";
 import { decompressCharacterFromUrl } from "./utils/sync";
+import { deleteCharacterFromCloud } from "./utils/cloudSync";
 import { 
   BookOpen, Dices, Save, Printer, ZoomIn, ZoomOut, Maximize2, 
-  Check, Users 
+  Check, Users, Trash2 
 } from "lucide-react";
 
 export default function App() {
@@ -91,7 +92,35 @@ export default function App() {
     setTimeout(() => setSaveToast(false), 2500);
   };
 
-  const handleQuickRoll = (label, sides, mod = 0) => {
+  const handleQuickRoll = (label, sides = 20, mod = 0, formula = null) => {
+    if (formula) {
+      const match = String(formula).match(/(\d+)d(\d+)(?:\s*([+-])\s*(\d+))?/i);
+      if (match) {
+        const count = parseInt(match[1], 10) || 1;
+        const diceSides = parseInt(match[2], 10) || 6;
+        const sign = match[3] === '-' ? -1 : 1;
+        const addMod = match[4] ? sign * parseInt(match[4], 10) : 0;
+        let rolls = [];
+        let rollSum = 0;
+        for (let i = 0; i < count; i++) {
+          const r = Math.floor(Math.random() * diceSides) + 1;
+          rolls.push(r);
+          rollSum += r;
+        }
+        const total = rollSum + addMod;
+        setQuickRollNotification({
+          label,
+          sides: diceSides,
+          roll: count > 1 ? rolls.join("+") : rolls[0],
+          mod: addMod,
+          total,
+          isCrit: false,
+          isFumble: false
+        });
+        setTimeout(() => setQuickRollNotification(null), 4000);
+        return;
+      }
+    }
     const roll = Math.floor(Math.random() * sides) + 1;
     const total = roll + mod;
     setQuickRollNotification({
@@ -174,19 +203,6 @@ export default function App() {
               </select>
             </div>
 
-            {/* Botão de Restaurar Ficha do Thokk */}
-            <button
-              onClick={() => {
-                if (confirm("Deseja carregar a ficha original do Thokk Lâmina-Partida com todos os atributos oficiais?")) {
-                  setCharacter(DEFAULT_CHARACTER);
-                }
-              }}
-              className="px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 transition-all flex items-center gap-1 shadow-sm"
-              title="Carregar a ficha canônica do Thokk Lâmina-Partida"
-            >
-              <span>⚔️ Thokk</span>
-            </button>
-
             {/* Botão de Mesa Online / Fichas do Grupo */}
             <button
               onClick={() => setIsPartyMenuOpen(true)}
@@ -195,6 +211,24 @@ export default function App() {
             >
               <Users size={13} className="text-emerald-400" />
               <span>Mesa Online</span>
+            </button>
+
+            {/* Botão de Excluir Ficha */}
+            <button
+              onClick={async () => {
+                if (window.confirm(`Tem certeza que deseja excluir permanentemente a ficha de "${character.name}"?`)) {
+                  await deleteCharacterFromCloud(character.id, character.name);
+                  try {
+                    localStorage.removeItem("dnd5e_nexus_character_v3");
+                  } catch (e) {}
+                  setCurrentScreen("hub");
+                }
+              }}
+              className="px-2 py-1 rounded-xl text-xs font-bold bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/40 transition-all flex items-center gap-1 shadow-sm active:scale-95"
+              title="Excluir esta ficha permanentemente"
+            >
+              <Trash2 size={13} className="text-red-400" />
+              <span className="hidden sm:inline">Excluir Ficha</span>
             </button>
           </div>
 

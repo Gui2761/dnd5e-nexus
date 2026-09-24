@@ -91,6 +91,59 @@ export default async function handler(req, res) {
       return res.status(200).json({ success: true, character, totalCharacters: chars.length, characters: chars });
     }
 
+    // 3. DELETE: Remove a character by id or name
+    if (req.method === 'DELETE') {
+      const charId = req.query?.id || (req.body && (typeof req.body === 'string' ? JSON.parse(req.body).id : req.body.id));
+      const charName = req.query?.name || (req.body && (typeof req.body === 'string' ? JSON.parse(req.body).name : req.body.name));
+
+      if (!charId && !charName) {
+        return res.status(400).json({ error: 'Character id or name required for deletion' });
+      }
+
+      const getRes = await fetch('https://api.github.com/gists/' + GIST_ID, {
+        headers: {
+          'Authorization': 'token ' + GITHUB_TOKEN,
+          'Accept': 'application/vnd.github.v3+json',
+          'User-Agent': 'DnD5e-Nexus'
+        }
+      });
+      const currentGist = await getRes.json();
+      const currentContent = JSON.parse(currentGist.files['party.json']?.content || '{"characters":[]}');
+      
+      let chars = currentContent.characters || [];
+      chars = chars.filter(c => {
+        if (charId && (c.id === charId || c.name?.toLowerCase().replace(/\s+/g, '_') === charId)) return false;
+        if (charName && c.name?.toLowerCase() === charName.toLowerCase()) return false;
+        return true;
+      });
+
+      currentContent.characters = chars;
+
+      const patchRes = await fetch('https://api.github.com/gists/' + GIST_ID, {
+        method: 'PATCH',
+        headers: {
+          'Authorization': 'token ' + GITHUB_TOKEN,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json',
+          'User-Agent': 'DnD5e-Nexus'
+        },
+        body: JSON.stringify({
+          files: {
+            'party.json': {
+              content: JSON.stringify(currentContent, null, 2)
+            }
+          }
+        })
+      });
+
+      if (!patchRes.ok) {
+        const errText = await patchRes.text();
+        return res.status(patchRes.status).json({ error: 'Failed to update Gist', detail: errText });
+      }
+
+      return res.status(200).json({ success: true, totalCharacters: chars.length, characters: chars });
+    }
+
     return res.status(405).json({ error: 'Method not allowed' });
   } catch (err) {
     console.error('API Error:', err);

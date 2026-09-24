@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Users, Plus, Shield, Heart, Zap, Sparkles, RefreshCw, ChevronRight, User, Sword } from "lucide-react";
-import { fetchPartyFromCloud, saveCharacterToCloud } from "../utils/cloudSync";
+import { Users, Plus, Shield, Heart, Zap, Sparkles, RefreshCw, ChevronRight, User, Sword, Trash2 } from "lucide-react";
+import { fetchPartyFromCloud, saveCharacterToCloud, deleteCharacterFromCloud } from "../utils/cloudSync";
+import { createCleanCharacter } from "../utils/characterTemplates";
 import { DEFAULT_CHARACTER } from "../data/initialCharacter";
 import { getThemeForClass } from "../utils/theme";
 
@@ -12,8 +13,8 @@ export default function PartyHub({ onSelectCharacter }) {
 
   // Formulário de Criação
   const [name, setName] = useState("");
-  const [className, setClassName] = useState("Paladino");
-  const [race, setRace] = useState("Meio-Orc");
+  const [className, setClassName] = useState("Guerreiro");
+  const [race, setRace] = useState("Humano");
   const [level, setLevel] = useState(1);
   const [playerName, setPlayerName] = useState("");
 
@@ -37,30 +38,14 @@ export default function PartyHub({ onSelectCharacter }) {
     if (!name.trim()) return;
 
     setCreating(true);
-    const newChar = {
-      ...DEFAULT_CHARACTER,
-      id: "char_" + Date.now(),
+    // Cria ficha 100% LIMPA e Nova com regras automáticas da Raça e Classe do D&D 5e
+    const newChar = createCleanCharacter({
       name: name.trim(),
-      className: className,
-      race: race,
+      race,
+      className,
       level: Number(level) || 1,
-      playerName: playerName.trim() || "Aventureiro",
-      hpMax: 10 + (Number(level) - 1) * 6,
-      hpCurrent: 10 + (Number(level) - 1) * 6,
-      armorClass: 14,
-      attacks: [
-        {
-          id: "atk-init-1",
-          name: className === "Mago" ? "Raio de Fogo" : className === "Ladino" ? "Adaga" : "Espada Longa",
-          bonus: "+5",
-          damage: className === "Mago" ? "1d10 de fogo" : "1d8 + 3 cortante",
-          notes: ""
-        }
-      ],
-      coins: { cp: 0, sp: 0, ep: 0, gp: 15, pp: 0 },
-      equipmentText: `• Roupas de aventureiro\n• Mochila de viagem com rações e cantil\n• Riquezas: 15 PO`,
-      featuresText: `• Herança ${race}\nCaracterísticas ancestrais inatas.\n\n• Treinamento de ${className}\nHabilidades primordiais de combate e sobrevivência.`
-    };
+      playerName: playerName.trim()
+    });
 
     await saveCharacterToCloud(newChar);
     await loadCharacters();
@@ -69,6 +54,26 @@ export default function PartyHub({ onSelectCharacter }) {
     setName("");
     setPlayerName("");
     onSelectCharacter(newChar);
+  };
+
+  const handleDeleteCharacter = async (char, e) => {
+    e.stopPropagation();
+    if (!window.confirm(`Tem certeza que deseja excluir permanentemente a ficha de "${char.name}"?`)) {
+      return;
+    }
+    const targetId = char.id;
+    const targetName = char.name;
+    setParty(prev => prev.filter(c => (targetId ? c.id !== targetId : c.name !== targetName)));
+    await deleteCharacterFromCloud(targetId, targetName);
+    try {
+      const active = localStorage.getItem("dnd5e_nexus_character_v3");
+      if (active) {
+        const parsed = JSON.parse(active);
+        if (parsed.id === targetId || parsed.name === targetName) {
+          localStorage.removeItem("dnd5e_nexus_character_v3");
+        }
+      }
+    } catch (err) {}
   };
 
   const classesList = [
@@ -238,15 +243,25 @@ export default function PartyHub({ onSelectCharacter }) {
                     )}
                   </div>
 
-                  {/* Botão de Entrar na Ficha */}
-                  <button
-                    onClick={() => onSelectCharacter(char)}
-                    className="w-full py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-md group-hover:scale-[1.02] active:scale-95 text-black"
-                    style={{ backgroundColor: theme.primary }}
-                  >
-                    <span>⚔️ Abrir e Jogar com esta Ficha</span>
-                    <ChevronRight size={14} />
-                  </button>
+                  {/* Botões de Ação: Entrar na Ficha + Excluir */}
+                  <div className="flex items-center gap-2 mt-2">
+                    <button
+                      onClick={() => onSelectCharacter(char)}
+                      className="flex-1 py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-md group-hover:scale-[1.01] active:scale-95 text-black"
+                      style={{ backgroundColor: theme.primary }}
+                    >
+                      <span>⚔️ Jogar com esta Ficha</span>
+                      <ChevronRight size={14} />
+                    </button>
+                    
+                    <button
+                      onClick={(e) => handleDeleteCharacter(char, e)}
+                      className="py-2.5 px-3 rounded-xl font-bold text-xs bg-red-500/20 hover:bg-red-500/40 text-red-300 border border-red-500/30 transition-all shadow-sm flex items-center justify-center active:scale-95"
+                      title={`Excluir a ficha de ${char.name}`}
+                    >
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
                 </div>
               );
             })}

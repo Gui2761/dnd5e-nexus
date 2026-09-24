@@ -50,3 +50,20 @@ export async function saveCharacterToCloud(character) {
     return { success: false, error: err.message };
   }
 }
+
+export async function deleteCharacterFromCloud(characterId, characterName) {
+  try {
+    const res = await fetch(`/api/sync?id=${encodeURIComponent(characterId || "")}&name=${encodeURIComponent(characterName || "")}`, {
+      method: "DELETE"
+    });
+    if (res.ok) {
+      const result = await res.json();
+      return { success: true, characters: result.characters };
+    }
+    return { success: false, error: await res.text() };
+  } catch (err) {
+    console.error("Erro ao excluir personagem da nuvem:", err);
+    return { success: false, error: err.message };
+  }
+}
+

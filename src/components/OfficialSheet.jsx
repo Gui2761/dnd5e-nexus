@@ -450,9 +450,16 @@ export default function OfficialSheet({
 
                 {/* Bônus de Proficiência */}
                 <div className="border-[1.5px] border-neutral-800 rounded-md px-2 py-1 flex items-center gap-2 bg-neutral-50 h-7">
-                  <div className="w-5 h-5 rounded-full border border-neutral-800 flex items-center justify-center font-bold text-xs bg-white font-mono">
-                    +{profBonus}
-                  </div>
+                  <input
+                    type="text"
+                    value={character.profBonusOverride !== undefined ? character.profBonusOverride : `+${profBonus}`}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value.replace("+", ""), 10);
+                      setCharacter({ ...character, profBonusOverride: isNaN(val) ? e.target.value : val });
+                    }}
+                    className="w-7 h-5 rounded-full border border-neutral-800 text-center font-bold text-xs bg-white font-mono focus:outline-none"
+                    title="Bônus de Proficiência (editável)"
+                  />
                   <span className="text-[7.5px] font-extrabold uppercase text-neutral-600">BÔNUS DE PROFICIÊNCIA</span>
                 </div>
 
@@ -528,9 +535,16 @@ export default function OfficialSheet({
 
             {/* Sabedoria Passiva (Percepção) */}
             <div className="border-[1.5px] border-neutral-800 rounded-md p-1 px-2 flex items-center gap-2 bg-neutral-50 h-7">
-              <div className="w-5 h-5 rounded border border-neutral-800 flex items-center justify-center font-bold text-xs bg-white font-mono">
-                {passivePerception}
-              </div>
+              <input
+                type="text"
+                value={character.passivePerceptionOverride !== undefined ? character.passivePerceptionOverride : passivePerception}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value, 10);
+                  setCharacter({ ...character, passivePerceptionOverride: isNaN(val) ? e.target.value : val });
+                }}
+                className="w-6 h-5 rounded border border-neutral-800 text-center font-bold text-xs bg-white font-mono focus:outline-none"
+                title="Sabedoria Passiva (editável)"
+              />
               <span className="text-[7.5px] font-extrabold uppercase text-neutral-600">
                 SABEDORIA PASSIVA (PERCEPÇÃO)
               </span>
@@ -608,12 +622,27 @@ export default function OfficialSheet({
 
               {/* Iniciativa */}
               <div className="border-[1.5px] border-neutral-800 rounded-lg p-1 bg-neutral-50 text-center flex flex-col items-center justify-center h-14">
-                <button
-                  onClick={() => onQuickRoll("Iniciativa", 20, character.initiativeBonus)}
-                  className="font-black text-xl text-center bg-transparent w-full focus:outline-none leading-none font-mono hover:text-amber-600"
-                >
-                  {formatModifier(character.initiativeBonus)}
-                </button>
+                <div className="flex items-center justify-center gap-0.5">
+                  <input
+                    type="text"
+                    value={character.initiativeBonus !== undefined ? character.initiativeBonus : formatModifier(getAbilityModifier(character.stats.dex))}
+                    onChange={(e) => {
+                      const raw = e.target.value;
+                      const val = parseInt(raw.replace("+", ""), 10);
+                      setCharacter({ ...character, initiativeBonus: isNaN(val) ? raw : val });
+                    }}
+                    className="font-black text-xl text-center bg-transparent w-10 focus:outline-none leading-none font-mono"
+                    title="Bônus de Iniciativa (editável)"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => onQuickRoll("Iniciativa", 20, parseInt(character.initiativeBonus, 10) || getAbilityModifier(character.stats.dex))}
+                    className="text-xs hover:scale-125 transition-transform text-neutral-400 hover:text-amber-600 select-none cursor-pointer"
+                    title="Rolar Teste de Iniciativa (d20)"
+                  >
+                    🎲
+                  </button>
+                </div>
                 <span className="text-[6.5px] font-extrabold uppercase text-neutral-600 tracking-wider">
                   INICIATIVA
                 </span>
@@ -818,37 +847,61 @@ export default function OfficialSheet({
                           </button>
                         </div>
 
-                        {/* Linha Inferior: Badges de Ataque e Dano */}
+                        {/* Linha Inferior: Bônus de Ataque Editável + Rolador & Dano Editável + Rolador */}
                         <div className="flex items-center gap-1.5 text-[7.5px]">
-                          {/* Botão de Rolagem de Ataque */}
-                          <button
-                            type="button"
-                            onClick={() => onQuickRoll(`Ataque com ${atk.name}`, 20, parseInt(atk.bonus, 10) || 0)}
-                            className="flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-100/90 hover:bg-red-200 text-red-950 font-bold border border-red-300 font-mono transition-all shadow-xs"
-                            title="Clique para rolar o ataque d20"
-                          >
-                            <span>🎲</span>
-                            <span>{atk.bonus || "+0"} Atq</span>
-                          </button>
-
-                          {/* Dano Editável */}
-                          <div className="flex-1 min-w-0">
+                          {/* Bônus de Ataque com Rolador d20 */}
+                          <div className="flex items-center bg-red-100/90 border border-red-300 rounded px-1 py-0.5 shadow-xs">
+                            <button
+                              type="button"
+                              onClick={() => onQuickRoll(`Ataque com ${atk.name || "Arma"}`, 20, parseInt(atk.bonus, 10) || 0)}
+                              className="text-[9px] hover:scale-125 transition-transform mr-1 text-red-900 select-none cursor-pointer"
+                              title="Rolar d20 + Bônus de Ataque"
+                            >
+                              🎲
+                            </button>
                             <input
                               type="text"
-                              value={atk.damage}
+                              value={atk.bonus || ""}
+                              onChange={(e) => handleAttackChange(atk.id, "bonus", e.target.value)}
+                              className="w-7 font-black font-mono text-[8px] bg-transparent text-red-950 focus:outline-none text-center"
+                              placeholder="+0"
+                              title="Bônus de Ataque (ex: +7)"
+                            />
+                            <span className="text-[6.5px] uppercase font-bold text-red-800 ml-0.5 select-none">Atq</span>
+                          </div>
+
+                          {/* Dano Editável com Rolador de Dados */}
+                          <div className="flex-1 min-w-0 flex items-center bg-white border border-neutral-300 rounded px-1.5 py-0.5 shadow-xs">
+                            <button
+                              type="button"
+                              onClick={() => onQuickRoll(`Dano de ${atk.name || "Arma"}`, 8, 0, atk.damage)}
+                              className="text-[9px] hover:scale-125 transition-transform mr-1.5 text-amber-700 select-none cursor-pointer"
+                              title="Rolar dados de dano da arma"
+                            >
+                              💥
+                            </button>
+                            <input
+                              type="text"
+                              value={atk.damage || ""}
                               onChange={(e) => handleAttackChange(atk.id, "damage", e.target.value)}
-                              className="w-full font-bold text-neutral-800 bg-white/70 px-1 py-0.5 rounded border border-neutral-200 focus:outline-none font-mono text-[7.5px] truncate"
-                              placeholder="Dano (ex: 1d12+5)"
+                              className="w-full font-bold text-neutral-800 bg-transparent focus:outline-none font-mono text-[7.5px] truncate"
+                              placeholder="Dano / Tipo (ex: 1d12 + 5 cortante)"
+                              title="Fórmula do Dado de Dano e Tipo"
                             />
                           </div>
                         </div>
 
-                        {/* Propriedades / Notas */}
-                        {atk.notes && (
-                          <div className="mt-1 text-[6.5px] text-neutral-600 italic px-1 bg-black/5 rounded truncate">
-                            {atk.notes}
-                          </div>
-                        )}
+                        {/* Propriedades / Notas Editáveis */}
+                        <div className="mt-1 flex items-center gap-1 bg-black/5 rounded px-1 py-0.5">
+                          <span className="text-[6.5px] text-neutral-500 font-bold uppercase select-none">Obs:</span>
+                          <input
+                            type="text"
+                            value={atk.notes || ""}
+                            onChange={(e) => handleAttackChange(atk.id, "notes", e.target.value)}
+                            className="w-full text-[7px] text-neutral-700 bg-transparent italic focus:outline-none truncate"
+                            placeholder="Propriedades da arma (ex: Pesada, duas mãos, alcance)"
+                          />
+                        </div>
                       </div>
                     );
                   })}
