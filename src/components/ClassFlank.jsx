@@ -15,9 +15,9 @@ export const CLASS_LORE = {
     spellcasting: "Carisma (Magia de Pacto - Slots máx recarregam em Descanso Curto)",
     spellStat: "cha",
     mechanics: [
-      { name: "Patrono Transcendental", desc: "Pacto com entidade extraplanar suprema (Corruptor, Grande Antigo ou Arquifada)." },
-      { name: "Magia de Pacto", desc: "Espaços de magia lançados sempre no círculo máximo disponível e recuperados em descanso curto." },
-      { name: "Invocações Místicas", desc: "Poderes arcanos permanentes como Rajada Agonizante, Visão Diabólica e Armadura das Sombras." }
+      { name: "Patrono Transcendental", level: 1, desc: "Pacto com entidade extraplanar suprema (Corruptor, Grande Antigo ou Arquifada)." },
+      { name: "Magia de Pacto", level: 1, desc: "Espaços de magia lançados sempre no círculo máximo disponível e recuperados em descanso curto." },
+      { name: "Invocações Místicas", level: 2, desc: "Poderes arcanos permanentes como Rajada Agonizante, Visão Diabólica e Armadura das Sombras." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_14px_rgba(168,85,247,0.7)]">
@@ -45,9 +45,9 @@ export const CLASS_LORE = {
     spellcasting: "Carisma (Preparação diária divina)",
     spellStat: "cha",
     mechanics: [
-      { name: "Sentido Divino", desc: "Detecta a presença de celestiais, corruptores e mortos-vivos num raio de 18m." },
-      { name: "Cura pelas Mãos", desc: "Reserva sagrada (Nível x 5 PV) para restaurar vida ou expurgar venenos e doenças." },
-      { name: "Destruição Divina", desc: "Gasta espaços de magia ao acertar ataques corpo a corpo para causar dano radiante extra massivo." }
+      { name: "Sentido Divino", level: 1, desc: "Detecta a presença de celestiais, corruptores e mortos-vivos num raio de 18m." },
+      { name: "Cura pelas Mãos", level: 1, desc: "Reserva sagrada (Nível x 5 PV) para restaurar vida ou expurgar venenos e doenças." },
+      { name: "Destruição Divina", level: 2, desc: "Gasta espaços de magia ao acertar ataques corpo a corpo para causar dano radiante extra massivo." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(234,179,8,0.6)]">
@@ -71,9 +71,9 @@ export const CLASS_LORE = {
     spellcasting: "Não-conjurador (exceto Cavaleiro Arcano)",
     spellStat: null,
     mechanics: [
-      { name: "Retomar o Fôlego", desc: "Ação bônus para recuperar 1d10 + Nível em PV (1x por descanso curto ou longo)." },
-      { name: "Surto de Ação", desc: "Realiza uma ação adicional inteira no mesmo turno (1x por descanso curto)." },
-      { name: "Estilo de Luta", desc: "Especialização em Duelo, Arquearia, Combate com Duas Armas ou Defesa." }
+      { name: "Retomar o Fôlego", level: 1, desc: "Ação bônus para recuperar 1d10 + Nível em PV (1x por descanso curto ou longo)." },
+      { name: "Estilo de Luta", level: 1, desc: "Especialização em Duelo, Arquearia, Combate com Duas Armas ou Defesa." },
+      { name: "Surto de Ação", level: 2, desc: "Realiza uma ação adicional inteira no mesmo turno (1x por descanso curto)." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(234,88,12,0.6)]">
@@ -96,9 +96,9 @@ export const CLASS_LORE = {
     spellcasting: "Inteligência (Grimório com aprendizado contínuo e rituais)",
     spellStat: "int",
     mechanics: [
-      { name: "Grimório Arcano", desc: "Copia novas magias encontradas em pergaminhos ou tomos arcanos para seu livro perpétuo." },
-      { name: "Recuperação Arcana", desc: "Recupera espaços de magia gastos equivalente a metade do nível após descanso curto." },
-      { name: "Tradição Arcana", desc: "Especialização em escolas primordiais: Evocação, Necromancia, Ilusão ou Abjuração." }
+      { name: "Grimório Arcano", level: 1, desc: "Copia novas magias encontradas em pergaminhos ou tomos arcanos para seu livro perpétuo." },
+      { name: "Recuperação Arcana", level: 1, desc: "Recupera espaços de magia gastos equivalente a metade do nível após descanso curto." },
+      { name: "Tradição Arcana", level: 2, desc: "Especialização em escolas primordiais: Evocação, Necromancia, Ilusão ou Abjuração." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(99,102,241,0.6)]">
@@ -120,9 +120,9 @@ export const CLASS_LORE = {
     spellcasting: "Não-conjurador",
     spellStat: null,
     mechanics: [
-      { name: "Fúria Implacável", desc: "Vantagem em testes de Força, dano bônus corpo a corpo e resistência a corte, perfuração e concussão." },
-      { name: "Defesa Sem Armadura", desc: "Sua Classe de Armadura é 10 + Mod DES + Mod CON enquanto não portar armadura." },
-      { name: "Ataque Descuidado", desc: "Ataca com vantagem sacrificando defesas, concedendo vantagem aos inimigos até o próximo turno." }
+      { name: "Fúria Implacável", level: 1, desc: "Vantagem em testes de Força, dano bônus corpo a corpo e resistência a corte, perfuração e concussão." },
+      { name: "Defesa Sem Armadura", level: 1, desc: "Sua Classe de Armadura é 10 + Mod DES + Mod CON enquanto não portar armadura." },
+      { name: "Ataque Descuidado", level: 2, desc: "Ataca com vantagem sacrificando defesas, concedendo vantagem aos inimigos até o próximo turno." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(220,38,38,0.6)]">
@@ -144,9 +144,9 @@ export const CLASS_LORE = {
     spellcasting: "Carisma (Instrumentos musicais e canções mágicas)",
     spellStat: "cha",
     mechanics: [
-      { name: "Inspiração de Bardo", desc: "Gasta dados de inspiração (d6 a d12) como ação bônus para conferir bônus aos testes dos aliados." },
-      { name: "Pau pra Toda Obra", desc: "Adiciona metade do bônus de proficiência em qualquer teste de atributo que não possua proficiência." },
-      { name: "Canção de Descanso", desc: "Aliados recuperam 1d6 PV extras ao gastar dados de vida durante descansos curtos." }
+      { name: "Inspiração de Bardo", level: 1, desc: "Gasta dados de inspiração (d6 a d12) como ação bônus para conferir bônus aos testes dos aliados." },
+      { name: "Pau pra Toda Obra", level: 2, desc: "Adiciona metade do bônus de proficiência em qualquer teste de atributo que não possua proficiência." },
+      { name: "Canção de Descanso", level: 2, desc: "Aliados recuperam 1d6 PV extras ao gastar dados de vida durante descansos curtos." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(192,132,252,0.6)]">
@@ -171,9 +171,9 @@ export const CLASS_LORE = {
     spellcasting: "Sabedoria (Símbolo Sagrado e Milagres Divinos)",
     spellStat: "wis",
     mechanics: [
-      { name: "Canalizar Divindade", desc: "Canaliza poder cósmico para Expulsar Mortos-Vivos ou manifestar graças do Domínio Divino." },
-      { name: "Domínio Divino", desc: "Vida, Luz, Guerra, Tempestade, Trapaça concedem magias e proficiências de bônus." },
-      { name: "Intervenção Divina", desc: "Em momentos cruciais, suplica auxílio direto da própria divindade padroeira." }
+      { name: "Domínio Divino", level: 1, desc: "Vida, Luz, Guerra, Tempestade, Trapaça concedem magias e proficiências de bônus." },
+      { name: "Canalizar Divindade", level: 2, desc: "Canaliza poder cósmico para Expulsar Mortos-Vivos ou manifestar graças do Domínio Divino." },
+      { name: "Intervenção Divina", level: 10, desc: "Em momentos cruciais, suplica auxílio direto da própria divindade padroeira." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(56,189,248,0.6)]">
@@ -196,9 +196,9 @@ export const CLASS_LORE = {
     spellcasting: "Sabedoria (Foco Druídico e Trama Natural)",
     spellStat: "wis",
     mechanics: [
-      { name: "Forma Selvagem", desc: "Assume forma física de feras terrestres, aquáticas ou aladas com barra de PV própria." },
-      { name: "Círculo Druídico", desc: "Ordens antigas (Terra, Lua, Pastor) que expandem o poder elemental e metamorfoses de combate." },
-      { name: "Druídico", desc: "A linguagem secreta vegetal e ancestral falada exclusivamente por iniciados da ordem." }
+      { name: "Druídico", level: 1, desc: "A linguagem secreta vegetal e ancestral falada exclusivamente por iniciados da ordem." },
+      { name: "Forma Selvagem", level: 2, desc: "Assume forma física de feras terrestres, aquáticas ou aladas com barra de PV própria." },
+      { name: "Círculo Druídico", level: 2, desc: "Ordens antigas (Terra, Lua, Pastor) que expandem o poder elemental e metamorfoses de combate." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(34,197,94,0.6)]">
@@ -221,9 +221,9 @@ export const CLASS_LORE = {
     spellcasting: "Carisma (Centelha arcana residente na alma)",
     spellStat: "cha",
     mechanics: [
-      { name: "Metamagia", desc: "Altera feitiços no instante do lançamento: Magia Acelerada, Gêmea, Sutil ou Potencializada." },
-      { name: "Pontos de Feitiçaria", desc: "Reserva de energia mística flexível convertível em espaços de magia e efeitos de metamagia." },
-      { name: "Origem de Feitiçaria", desc: "Linhagem Dracônica, Magia Selvagem ou Alma Divina concedem resistências e asas." }
+      { name: "Origem de Feitiçaria", level: 1, desc: "Linhagem Dracônica, Magia Selvagem ou Alma Divina concedem resistências e asas." },
+      { name: "Pontos de Feitiçaria", level: 2, desc: "Reserva de energia mística flexível convertível em espaços de magia e efeitos de metamagia." },
+      { name: "Metamagia", level: 3, desc: "Altera feitiços no instante do lançamento: Magia Acelerada, Gêmea, Sutil ou Potencializada." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(249,115,22,0.6)]">
@@ -238,7 +238,7 @@ export const CLASS_LORE = {
     title: "Ladino",
     sub: "Mestre da Furtividade & Ataque Preciso",
     color: "#10b981",
-    bgAccent: "rgba(16, 185, 129, 0.15)",
+    bgAccent: "rgba(168, 85, 247, 0.15)",
     borderAccent: "rgba(110, 231, 183, 0.45)",
     quote: "O golpe perfeito é aquele que a vítima nunca teve a oportunidade de ver.",
     hitDie: "1d8 por nível",
@@ -246,10 +246,9 @@ export const CLASS_LORE = {
     spellcasting: "Não-conjurador (exceto Trapaceiro Arcano)",
     spellStat: null,
     mechanics: [
-      { name: "Ataque Furtivo", desc: "Dano adicional maciço (1d6 até 10d6) com armas de acuidade ou à distância sob vantagem." },
-      { name: "Ação Ardilosa", desc: "Ação bônus a cada turno para Disparar, Desengajar ou Esconder-se nas sombras." },
-      { name: "Especialização", desc: "Dobra permanentemente o bônus de proficiência em 4 perícias (ex: Furtividade e Ladinagem)." },
-      { name: "Esquiva Sobrenatural", desc: "Reação para reduzir pela metade o dano de um ataque que você possa enxergar." }
+      { name: "Ataque Furtivo", level: 1, desc: "Dano adicional maciço (1d6 até 10d6) com armas de acuidade ou à distância sob vantagem." },
+      { name: "Especialização", level: 1, desc: "Dobra permanentemente o bônus de proficiência em 4 perícias (ex: Furtividade e Ladinagem)." },
+      { name: "Ação Ardilosa", level: 2, desc: "Ação bônus a cada turno para Disparar, Desengajar ou Esconder-se nas sombras." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(16,185,129,0.6)]">
@@ -273,10 +272,9 @@ export const CLASS_LORE = {
     spellcasting: "Não-conjurador (manipulação de Ki primordial)",
     spellStat: "wis",
     mechanics: [
-      { name: "Artes Marciais", desc: "Utiliza Destreza para golpes desarmados e desfere ataques desarmados extras com ação bônus." },
-      { name: "Pontos de Ki", desc: "Energia mística para Rajada de Golpes (2 socos extras), Passo do Vento e Defesa Paciente." },
-      { name: "Defesa Sem Armadura", desc: "Sua CA é 10 + Mod DES + Mod SAB enquanto não empunhar escudo nem armadura." },
-      { name: "Movimento Rápido", desc: "Velocidade ampliada e habilidade de correr verticalmente por paredes e líquidos." }
+      { name: "Artes Marciais", level: 1, desc: "Utiliza Destreza para golpes desarmados e desfere ataques desarmados extras com ação bônus." },
+      { name: "Defesa Sem Armadura", level: 1, desc: "Sua CA é 10 + Mod DES + Mod SAB enquanto não empunhar escudo nem armadura." },
+      { name: "Pontos de Ki", level: 2, desc: "Energia mística para Rajada de Golpes (2 socos extras), Passo do Vento e Defesa Paciente." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(251,146,60,0.6)]">
@@ -301,9 +299,9 @@ export const CLASS_LORE = {
     spellcasting: "Sabedoria (Magias de rastreio, caça e sobrevivência)",
     spellStat: "wis",
     mechanics: [
-      { name: "Inimigo Favorito", desc: "Vantagem em testes de Sobrevivência para rastrear e bônus de conhecimento de criaturas." },
-      { name: "Explorador Natural", desc: "Imunidade a terreno difícil, o grupo nunca se perde e alerta constante durante marchas." },
-      { name: "Marca do Caçador", desc: "Sintoniza a caça a uma presa específica para infligir 1d6 de dano adicional contínuo." }
+      { name: "Inimigo Favorito", level: 1, desc: "Vantagem em testes de Sobrevivência para rastrear e bônus de conhecimento de criaturas." },
+      { name: "Explorador Natural", level: 1, desc: "Imunidade a terreno difícil, o grupo nunca se perde e alerta constante durante marchas." },
+      { name: "Marca do Caçador", level: 2, desc: "Sintoniza a caça a uma presa específica para infligir 1d6 de dano adicional contínuo." }
     ],
     icon: (
       <svg viewBox="0 0 100 100" className="w-16 h-16 drop-shadow-[0_0_12px_rgba(132,204,22,0.6)]">
@@ -333,6 +331,14 @@ export function findClassData(name) {
 export default function ClassFlank({ className = "Guerreiro", character }) {
   const data = findClassData(className);
 
+  // Determina o nível desta classe específica (suporte canônico a multiclasse)
+  const classEntry = Array.isArray(character?.classes)
+    ? character.classes.find(c => c.className === data.title)
+    : null;
+  const currentClassLevel = classEntry 
+    ? (parseInt(classEntry.level, 10) || 1) 
+    : (parseInt(character?.level, 10) || 1);
+
   // Calcula CD de Magia e Bônus de Ataque Mágico dinamicamente se a classe for conjuradora
   const spellStat = data.spellStat || (character?.spellcastingClass ? CLASS_SPELL_ABILITY[character.spellcastingClass] : null);
   const profBonus = character?.profBonusOverride !== undefined && character.profBonusOverride !== "" && !isNaN(parseInt(character.profBonusOverride, 10))
@@ -343,6 +349,9 @@ export default function ClassFlank({ className = "Guerreiro", character }) {
   const spellDC = 8 + profBonus + statMod;
   const spellAttack = profBonus + statMod;
   const spellAttackFormatted = spellAttack >= 0 ? `+${spellAttack}` : `${spellAttack}`;
+
+  // Filtra apenas poderes que o personagem JÁ desbloqueou no seu nível atual
+  const activeMechanics = data.mechanics.filter(m => (m.level || 1) <= currentClassLevel);
 
   return (
     <aside 
@@ -366,7 +375,7 @@ export default function ClassFlank({ className = "Guerreiro", character }) {
             {data.title}
           </h3>
           <span className="text-[10px] font-mono font-black px-2 py-0.5 rounded-full bg-white/10 text-amber-300 border border-white/10">
-            Nível {character?.level || 1}
+            Nível {currentClassLevel}
           </span>
         </div>
         <p className="text-[11px] text-white/60 italic mt-0.5">
@@ -401,19 +410,24 @@ export default function ClassFlank({ className = "Guerreiro", character }) {
         )}
       </div>
 
-      {/* Mecânicas de Classe */}
+      {/* Mecânicas de Classe Ativas pelo Nível */}
       <div className="mt-3 space-y-2">
         <span className="text-[10px] font-bold uppercase tracking-wider text-white/50 block">
-          Poderes da Classe:
+          Poderes Ativos da Classe (Nível {currentClassLevel}):
         </span>
-        {data.mechanics.map((m, idx) => (
+        {activeMechanics.map((m, idx) => (
           <div 
             key={idx} 
             className="p-2.5 rounded-xl border border-white/5 bg-white/[0.03] hover:bg-white/[0.06] transition-all"
           >
-            <div className="flex items-center gap-1.5 mb-1 font-bold text-xs" style={{ color: data.color }}>
-              <Sparkles size={12} />
-              <span>{m.name}</span>
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-1.5 font-bold text-xs" style={{ color: data.color }}>
+                <Sparkles size={12} />
+                <span>{m.name}</span>
+              </div>
+              <span className="text-[8.5px] font-mono font-bold px-1.5 py-0.5 rounded bg-white/10 text-amber-300 border border-white/10">
+                Nv. {m.level || 1}
+              </span>
             </div>
             <p className="text-[10px] text-white/70 leading-snug">
               {m.desc}
