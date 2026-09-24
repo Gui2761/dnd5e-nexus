@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react";
-import { BookOpen, Search, X, Shield, Sword, Sparkles, Award, AlertCircle, PlusCircle } from "lucide-react";
-import { WEAPONS, ARMORS, SPELLS_DATABASE, CLASS_FEATURES_DB, FEATS_DB, CONDITIONS_DB } from "../data/compendium";
+import { BookOpen, Search, X, Shield, Sword, Sparkles, Award, AlertCircle, PlusCircle, Compass, HelpCircle } from "lucide-react";
+import { WEAPONS, ARMORS, SPELLS_DATABASE, CLASS_FEATURES_DB, FEATS_DB, CONDITIONS_DB, BACKGROUNDS_DB, CORE_RULES_DB } from "../data/compendium";
 
-export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpell, currentTheme }) {
+export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpell, onApplyBackground, currentTheme }) {
   const [activeTab, setActiveTab] = useState("spells");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
@@ -11,7 +11,9 @@ export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpe
     { id: "spells", label: "Magias", icon: Sparkles },
     { id: "weapons", label: "Armas", icon: Sword },
     { id: "armors", label: "Armaduras", icon: Shield },
-    { id: "features", label: "Habilidades", icon: Award },
+    { id: "backgrounds", label: "Antecedentes", icon: Compass },
+    { id: "rules", label: "Regras de Jogo", icon: HelpCircle },
+    { id: "features", label: "Poderes de Classe", icon: Award },
     { id: "feats", label: "Talentos", icon: BookOpen },
     { id: "conditions", label: "Condições", icon: AlertCircle }
   ];
@@ -28,6 +30,12 @@ export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpe
     }
     if (activeTab === "armors") {
       return ARMORS.filter(a => a.name.toLowerCase().includes(term) || a.category.toLowerCase().includes(term));
+    }
+    if (activeTab === "backgrounds") {
+      return BACKGROUNDS_DB.filter(b => b.name.toLowerCase().includes(term) || b.skills.toLowerCase().includes(term) || b.feature.toLowerCase().includes(term));
+    }
+    if (activeTab === "rules") {
+      return CORE_RULES_DB.filter(r => r.name.toLowerCase().includes(term) || r.category.toLowerCase().includes(term) || r.desc.toLowerCase().includes(term));
     }
     if (activeTab === "features") {
       const allFeatures = [];
@@ -72,11 +80,11 @@ export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpe
             <div>
               <h2 className="text-xl font-bold font-serif text-white tracking-wide flex items-center gap-2">
                 Compêndio D&D 5e
-                <span className="text-xs px-2 py-0.5 rounded-full font-sans uppercase tracking-widest font-semibold" style={{ backgroundColor: currentTheme.primaryDark, color: currentTheme.primaryLight }}>
-                  SRD Oficial 2024
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full font-sans uppercase tracking-widest font-extrabold bg-amber-400 text-black shadow-sm">
+                  Livro do Jogador (Biblioteca Élfica - 315 págs)
                 </span>
               </h2>
-              <p className="text-xs text-white/60">Consulte regras, magias, armas e habilidades completas</p>
+              <p className="text-xs text-white/60">Regras oficiais, magias, armas, armaduras, antecedentes e mecânicas completas</p>
             </div>
           </div>
           <button 
@@ -97,9 +105,9 @@ export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpe
                 <button
                   key={tab.id}
                   onClick={() => { setActiveTab(tab.id); setSelectedItem(null); }}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                     isActive 
-                      ? "text-black shadow-md scale-105" 
+                      ? "shadow-md scale-105" 
                       : "text-white/70 hover:text-white hover:bg-white/5"
                   }`}
                   style={isActive ? { backgroundColor: currentTheme.primary, color: "#000" } : {}}
@@ -156,6 +164,16 @@ export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpe
                     {item.acFormula && (
                       <span className="text-xs font-mono font-bold text-sky-400">{item.acFormula}</span>
                     )}
+                    {item.skills && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase bg-emerald-950/70 text-emerald-300 border border-emerald-500/30">
+                        {item.skills.split(",")[0]}
+                      </span>
+                    )}
+                    {item.category && !item.acFormula && (
+                      <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase bg-amber-950/50 text-amber-300">
+                        {item.category.split("(")[0]}
+                      </span>
+                    )}
                     {item.className && (
                       <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase bg-purple-900/50 text-purple-300">
                         {item.className}
@@ -163,7 +181,7 @@ export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpe
                     )}
                   </div>
                   <p className="text-xs text-white/60 line-clamp-2 mt-1">
-                    {item.desc || item.properties || item.damageType || "Clique para ver detalhes."}
+                    {item.desc || item.properties || item.feature || item.damageType || "Clique para ver detalhes."}
                   </p>
                 </div>
               ))
@@ -190,7 +208,7 @@ export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpe
                     <p className="text-xs text-white/60 uppercase tracking-wider">{selectedItem.type}</p>
                   )}
                   {selectedItem.category && (
-                    <p className="text-xs text-sky-300 uppercase tracking-wider">Armadura {selectedItem.category}</p>
+                    <p className="text-xs text-sky-300 uppercase tracking-wider">{selectedItem.category}</p>
                   )}
                   {selectedItem.className && (
                     <p className="text-xs text-purple-300 uppercase tracking-wider">Habilidade de {selectedItem.className} (Nível {selectedItem.level})</p>
@@ -247,15 +265,53 @@ export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpe
                       <span className="font-bold text-amber-200">{selectedItem.cost}</span>
                     </div>
                   )}
+                  {selectedItem.skills && (
+                    <div className="p-2.5 rounded-lg bg-emerald-950/30 border border-emerald-900/40 col-span-2">
+                      <span className="text-emerald-300/70 block">Perícias Concedidas:</span>
+                      <span className="font-bold text-emerald-200">{selectedItem.skills}</span>
+                    </div>
+                  )}
+                  {selectedItem.tools && selectedItem.tools !== "Nenhuma" && (
+                    <div className="p-2.5 rounded-lg bg-white/5 border border-white/10">
+                      <span className="text-white/50 block">Ferramentas:</span>
+                      <span className="font-bold text-white">{selectedItem.tools}</span>
+                    </div>
+                  )}
+                  {selectedItem.languages && selectedItem.languages !== "Nenhum" && (
+                    <div className="p-2.5 rounded-lg bg-white/5 border border-white/10">
+                      <span className="text-white/50 block">Idiomas:</span>
+                      <span className="font-bold text-white">{selectedItem.languages}</span>
+                    </div>
+                  )}
                 </div>
 
+                {/* Característica de Antecedente */}
+                {selectedItem.feature && (
+                  <div className="p-3 rounded-xl bg-amber-950/20 border border-amber-500/30">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">Característica Especial:</h4>
+                    <p className="text-xs sm:text-sm text-amber-100/90 leading-relaxed font-serif">
+                      {selectedItem.feature}
+                    </p>
+                  </div>
+                )}
+
+                {/* Equipamento Inicial de Antecedente */}
+                {selectedItem.equipment && (
+                  <div className="p-3 rounded-xl bg-white/[0.03] border border-white/10 text-xs">
+                    <span className="text-white/50 block font-bold uppercase mb-1">Equipamento Inicial Concedido:</span>
+                    <p className="text-white/80">{selectedItem.equipment}</p>
+                  </div>
+                )}
+
                 {/* Descrição Completa das Regras */}
-                <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1">Regra Oficial:</h4>
-                  <p className="text-xs sm:text-sm text-white/90 leading-relaxed whitespace-pre-line font-serif">
-                    {selectedItem.desc}
-                  </p>
-                </div>
+                {selectedItem.desc && (
+                  <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-white/50 mb-1">Regra Oficial (PHB 5e):</h4>
+                    <p className="text-xs sm:text-sm text-white/90 leading-relaxed whitespace-pre-line font-serif">
+                      {selectedItem.desc}
+                    </p>
+                  </div>
+                )}
 
                 {/* Botões de Ação Direta para a Ficha */}
                 <div className="pt-2 flex gap-2">
@@ -291,7 +347,7 @@ export default function CompendiumModal({ isOpen, onClose, onAddWeapon, onAddSpe
               <div className="flex flex-col items-center justify-center h-full text-center p-6 text-white/40">
                 <BookOpen size={48} className="mb-3 opacity-30" />
                 <p className="text-sm font-semibold text-white/70">Nenhum item selecionado</p>
-                <p className="text-xs mt-1 max-w-xs">Clique em qualquer magia, arma, armadura ou talento na lista ao lado para ver todas as regras e estatísticas detalhadas.</p>
+                <p className="text-xs mt-1 max-w-xs">Clique em qualquer magia, arma, armadura, antecedente ou regra oficial na lista ao lado para ver todos os detalhes.</p>
               </div>
             )}
           </div>

@@ -1,15 +1,18 @@
-// Compêndio D&D 5e Completo (Edição 2024 / SRD Oficial em Português)
-// Contém Armas, Armaduras, Magias, Habilidades de Classe, Talentos e Condições
+// Compêndio Canônico D&D 5ª Edição Oficial (Baseado no Livro do Jogador - Biblioteca Élfica - 315 págs)
+// Contém Armas, Armaduras, Magias, Habilidades de Classe, Antecedentes, Regras de Jogo, Talentos e Condições
 
 export const WEAPONS = [
   // Armas Simples Corpo a Corpo
-  { name: "Adaga", type: "Simples Corpo a Corpo", damage: "1d4", damageType: "perfurante", properties: "Acuidade, arremesso (distância 6/18), leve", cost: "2 po", weight: "0,5 kg", desc: "Uma lâmina afiada perfeita para combate furtivo ou arremesso rápido." },
-  { name: "Clava", type: "Simples Corpo a Corpo", damage: "1d4", damageType: "concussão", properties: "Leve", cost: "1 pp", weight: "1 kg", desc: "Um pedaço pesado de madeira entalhada para atordoar inimigos." },
+  { name: "Adaga", type: "Simples Corpo a Corpo", damage: "1d4", damageType: "perfurante", properties: "Acuidade, leve, arremesso (distância 6/18)", cost: "2 po", weight: "0,5 kg", desc: "Uma lâmina afiada perfeita para combate furtivo ou arremesso rápido." },
+  { name: "Azagaia", type: "Simples Corpo a Corpo", damage: "1d6", damageType: "perfurante", properties: "Arremesso (distância 9/36)", cost: "5 pp", weight: "1 kg", desc: "Lança curta e balanceada para arremessos precisos a média distância." },
+  { name: "Bordão", type: "Simples Corpo a Corpo", damage: "1d6", damageType: "concussão", properties: "Versátil (1d8)", cost: "2 pp", weight: "2 kg", desc: "Cajado resistente comumente empunhado por magos, druidas e monges." },
+  { name: "Clava Grande", type: "Simples Corpo a Corpo", damage: "1d8", damageType: "concussão", properties: "Pesada, duas mãos", cost: "2 pp", weight: "5 kg", desc: "Pedaço maciço de madeira rústica empunhado com ambas as mãos." },
+  { name: "Foice Curta", type: "Simples Corpo a Corpo", damage: "1d4", damageType: "cortante", properties: "Leve", cost: "1 po", weight: "1 kg", desc: "Lâmina curva simples, tradicional entre camponeses e druidas." },
   { name: "Lança", type: "Simples Corpo a Corpo", damage: "1d6", damageType: "perfurante", properties: "Arremesso (distância 6/18), versátil (1d8)", cost: "1 po", weight: "1,5 kg", desc: "Uma haste de madeira com ponta de metal afiada. Pode ser usada com uma ou duas mãos." },
   { name: "Maça", type: "Simples Corpo a Corpo", damage: "1d6", damageType: "concussão", properties: "—", cost: "5 po", weight: "2 kg", desc: "Arma contundente com cabeça pesada com flange ou cravos." },
-  { name: "Machadinha", type: "Simples Corpo a Corpo", damage: "1d6", damageType: "cortante", properties: "Leve, arremesso (distância 6/18)", cost: "5 po", weight: "1 kg", desc: "Machado compacto perfeito para combates rápidos com as duas mãos." },
-  { name: "Bordão", type: "Simples Corpo a Corpo", damage: "1d6", damageType: "concussão", properties: "Versátil (1d8)", cost: "2 pp", weight: "2 kg", desc: "Cajado resistente comumente empunhado por magos, druidas e monges." },
+  { name: "Machadinha", type: "Simples Corpo a Corpo", damage: "1d6", damageType: "cortante", properties: "Leve, arremesso (distância 6/18)", cost: "5 po", weight: "1 kg", desc: "Machado compacto perfeito para combates rápidos ou arremesso." },
   { name: "Martelo Leve", type: "Simples Corpo a Corpo", damage: "1d4", damageType: "concussão", properties: "Leve, arremesso (distância 6/18)", cost: "2 po", weight: "1 kg", desc: "Martelo balanceado para combate corporal ou arremesso." },
+  { name: "Porrete", type: "Simples Corpo a Corpo", damage: "1d4", damageType: "concussão", properties: "Leve", cost: "1 pp", weight: "1 kg", desc: "Clava pequena e simples para atordoamento rápido." },
 
   // Armas Simples à Distância
   { name: "Arco Curto", type: "Simples à Distância", damage: "1d6", damageType: "perfurante", properties: "Munição (distância 24/96), duas mãos", cost: "25 po", weight: "1 kg", desc: "Arco ágil para caçadores e arqueiros rápidos." },
@@ -18,25 +21,31 @@ export const WEAPONS = [
   { name: "Funda", type: "Simples à Distância", damage: "1d4", damageType: "concussão", properties: "Munição (distância 9/36)", cost: "1 pp", weight: "—", desc: "Tira de couro para arremessar pedras ou esferas metálicas com força." },
 
   // Armas Marciais Corpo a Corpo
-  { name: "Espada Longa", type: "Marcial Corpo a Corpo", damage: "1d8", damageType: "cortante", properties: "Versátil (1d10)", cost: "15 po", weight: "1,5 kg", desc: "A icônica lâmina de cavalheiros e paladinos. Usável com 1 mão (1d8) ou 2 mãos (1d10)." },
-  { name: "Espadão (Montante)", type: "Marcial Corpo a Corpo", damage: "2d6", damageType: "cortante", properties: "Pesada, duas mãos", cost: "50 po", weight: "3 kg", desc: "Lâmina massiva devastadora que exige força física e duas mãos." },
-  { name: "Espada Curta", type: "Marcial Corpo a Corpo", damage: "1d6", damageType: "perfurante", properties: "Acuidade, leve", cost: "10 po", weight: "1 kg", desc: "Arma favorita de ladinos e duelistas ágeis." },
+  { name: "Alabarda", type: "Marcial Corpo a Corpo", damage: "1d10", damageType: "cortante", properties: "Pesada, alcance, duas mãos", cost: "20 po", weight: "3 kg", desc: "Lâmina de machado em haste longa permitindo atacar a 3 metros de distância." },
   { name: "Cimitarra", type: "Marcial Corpo a Corpo", damage: "1d6", damageType: "cortante", properties: "Acuidade, leve", cost: "25 po", weight: "1,5 kg", desc: "Lâmina curva refinada excelente para golpes cortantes velozes." },
-  { name: "Rapieira", type: "Marcial Corpo a Corpo", damage: "1d8", damageType: "perfurante", properties: "Acuidade", cost: "25 po", weight: "1 kg", desc: "Estoque elegante de precisão suprema para duelistas." },
+  { name: "Chicote", type: "Marcial Corpo a Corpo", damage: "1d4", damageType: "cortante", properties: "Acuidade, alcance", cost: "2 po", weight: "1,5 kg", desc: "Tira trançada de couro para controle tático a distância." },
+  { name: "Espada Curta", type: "Marcial Corpo a Corpo", damage: "1d6", damageType: "perfurante", properties: "Acuidade, leve", cost: "10 po", weight: "1 kg", desc: "Arma favorita de ladinos e duelistas ágeis." },
+  { name: "Espada Grande (Montante)", type: "Marcial Corpo a Corpo", damage: "2d6", damageType: "cortante", properties: "Pesada, duas mãos", cost: "50 po", weight: "3 kg", desc: "Lâmina massiva devastadora que exige força física e duas mãos." },
+  { name: "Espada Longa", type: "Marcial Corpo a Corpo", damage: "1d8", damageType: "cortante", properties: "Versátil (1d10)", cost: "15 po", weight: "1,5 kg", desc: "A icônica lâmina de guerreiros e paladinos. Usável com 1 mão (1d8) ou 2 mãos (1d10)." },
+  { name: "Glaive", type: "Marcial Corpo a Corpo", damage: "1d10", damageType: "cortante", properties: "Pesada, alcance, duas mãos", cost: "20 po", weight: "3 kg", desc: "Haste com lâmina curva cortante de alcance ampliado." },
+  { name: "Lança de Montaria", type: "Marcial Corpo a Corpo", damage: "1d12", damageType: "perfurante", properties: "Alcance, especial", cost: "10 po", weight: "3 kg", desc: "Arma pesada de cavalaria para investidas devastadoras montadas." },
+  { name: "Lança Longa (Pique)", type: "Marcial Corpo a Corpo", damage: "1d10", damageType: "perfurante", properties: "Pesada, alcance, duas mãos", cost: "5 po", weight: "4 kg", desc: "Haste militar extremamente comprida para deter cargas inimigas." },
+  { name: "Maça Estrela", type: "Marcial Corpo a Corpo", damage: "1d8", damageType: "perfurante", properties: "—", cost: "15 po", weight: "2 kg", desc: "Esfera metálica com cravos afiados em cabo de madeira reforçado." },
   { name: "Machado de Batalha", type: "Marcial Corpo a Corpo", damage: "1d8", damageType: "cortante", properties: "Versátil (1d10)", cost: "10 po", weight: "2 kg", desc: "Machado robusto usado com frequência por anões e guerreiros." },
   { name: "Machado Grande", type: "Marcial Corpo a Corpo", damage: "1d12", damageType: "cortante", properties: "Pesada, duas mãos", cost: "30 po", weight: "3,5 kg", desc: "A arma de fúria máxima dos bárbaros e guerreiros brutais." },
+  { name: "Malho (Maul)", type: "Marcial Corpo a Corpo", damage: "2d6", damageType: "concussão", properties: "Pesada, duas mãos", cost: "10 po", weight: "5 kg", desc: "Marreta maciça de aço capaz de quebrar ossos através da armadura." },
+  { name: "Mangual", type: "Marcial Corpo a Corpo", damage: "1d8", damageType: "concussão", properties: "—", cost: "10 po", weight: "1 kg", desc: "Esfera de ferro presa por corrente que contorna escudos." },
   { name: "Martelo de Guerra", type: "Marcial Corpo a Corpo", damage: "1d8", damageType: "concussão", properties: "Versátil (1d10)", cost: "15 po", weight: "1 kg", desc: "Esmaga armaduras pesadas com facilidade." },
-  { name: "Mangual", type: "Marcial Corpo a Corpo", damage: "1d8", damageType: "concussão", properties: "—", cost: "10 po", weight: "1 kg", desc: "Esfera de ferro com cravos presa por corrente." },
-  { name: "Alabarda", type: "Marcial Corpo a Corpo", damage: "1d10", damageType: "cortante", properties: "Pesada, alcance, duas mãos", cost: "20 po", weight: "3 kg", desc: "Lâmina de machado em haste longa permitindo atacar a 3 metros de distância." },
-  { name: "Glaive", type: "Marcial Corpo a Corpo", damage: "1d10", damageType: "cortante", properties: "Pesada, alcance, duas mãos", cost: "20 po", weight: "3 kg", desc: "Haste com lâmina curva cortante de alcance ampliado." },
-  { name: "Lança Longa (Pique)", type: "Marcial Corpo a Corpo", damage: "1d10", damageType: "perfurante", properties: "Pesada, alcance, duas mãos", cost: "5 po", weight: "9 kg", desc: "Haste militar extremamente comprida para deter cargas inimigas." },
+  { name: "Picareta de Guerra", type: "Marcial Corpo a Corpo", damage: "1d8", damageType: "perfurante", properties: "—", cost: "5 po", weight: "1 kg", desc: "Ponta de perfuração reforçada para transpassar armaduras." },
+  { name: "Rapieira", type: "Marcial Corpo a Corpo", damage: "1d8", damageType: "perfurante", properties: "Acuidade", cost: "25 po", weight: "1 kg", desc: "Estoque elegante de precisão suprema para duelistas." },
   { name: "Tridente", type: "Marcial Corpo a Corpo", damage: "1d6", damageType: "perfurante", properties: "Arremesso (distância 6/18), versátil (1d8)", cost: "5 po", weight: "2 kg", desc: "Arma com três dentes farpados clássica de gladiadores e marinheiros." },
-  { name: "Chicote", type: "Marcial Corpo a Corpo", damage: "1d4", damageType: "cortante", properties: "Acuidade, alcance", cost: "2 po", weight: "1,5 kg", desc: "Tira trançada de couro para controle tático a distância." },
 
   // Armas Marciais à Distância
   { name: "Arco Longo", type: "Marcial à Distância", damage: "1d8", damageType: "perfurante", properties: "Munição (distância 45/180), pesada, duas mãos", cost: "50 po", weight: "1 kg", desc: "Arma de tiro de elite com alcance superior." },
-  { name: "Besta Pesada", type: "Marcial à Distância", damage: "1d10", damageType: "perfurante", properties: "Munição (distância 30/120), pesada, recarga, duas mãos", cost: "50 po", weight: "9 kg", desc: "Mecanismo massivo capaz de perfurar as mais duras armaduras." },
-  { name: "Besta de Mão", type: "Marcial à Distância", damage: "1d6", damageType: "perfurante", properties: "Munição (distância 9/36), leve, recarga", cost: "75 po", weight: "1,5 kg", desc: "Besta compacta usável com uma mão só, favorita de assassinos." }
+  { name: "Besta de Mão", type: "Marcial à Distância", damage: "1d6", damageType: "perfurante", properties: "Munição (distância 9/36), leve, recarga", cost: "75 po", weight: "1,5 kg", desc: "Besta compacta usável com uma mão só, favorita de assassinos." },
+  { name: "Besta Pesada", type: "Marcial à Distância", damage: "1d10", damageType: "perfurante", properties: "Munição (distância 30/120), pesada, recarga, duas mãos", cost: "50 po", weight: "4,5 kg", desc: "Mecanismo massivo capaz de perfurar as mais duras armaduras." },
+  { name: "Zarabatana", type: "Marcial à Distância", damage: "1", damageType: "perfurante", properties: "Munição (distância 7,5/30), recarga", cost: "10 po", weight: "0,5 kg", desc: "Tubo fino para disparar dardos sutis, comumente banhados em veneno." },
+  { name: "Rede", type: "Marcial à Distância", damage: "—", damageType: "especial", properties: "Especial, arremesso (distância 1,5/4,5)", cost: "1 po", weight: "1,5 kg", desc: "Prende uma criatura Grande ou menor na condição Impedido até que ela escape (CD 10 FOR)." }
 ];
 
 export const ARMORS = [
@@ -54,12 +63,170 @@ export const ARMORS = [
 
   // Armaduras Pesadas
   { name: "Cota de Anéis", category: "Pesada", acFormula: "14", baseAC: 14, strReq: 0, stealthDisadv: true, cost: "30 po", weight: "20 kg", desc: "Argolas de ferro cosidas diretamente sobre tecido grosso." },
-  { name: "Cota de Malha", category: "Pesada", acFormula: "16", baseAC: 16, strReq: 13, stealthDisadv: true, cost: "75 po", weight: "25 kg", desc: "Entrelaçado completo de elos de metal. Padrão inicial de paladinos e clérigos de guerra." },
+  { name: "Cota de Malha", category: "Pesada", acFormula: "16", baseAC: 16, strReq: 13, stealthDisadv: true, cost: "75 po", weight: "25 kg", desc: "Entrelaçado completo de elos de metal. Padrão inicial de paladinos e guerreiros." },
   { name: "Cota de Talas", category: "Pesada", acFormula: "17", baseAC: 17, strReq: 15, stealthDisadv: true, cost: "200 po", weight: "30 kg", desc: "Tiras verticais de aço rebitadas a forro acolchoado." },
   { name: "Armadura de Placas (Full Plate)", category: "Pesada", acFormula: "18", baseAC: 18, strReq: 15, stealthDisadv: true, cost: "1.500 po", weight: "32 kg", desc: "A cúspide da defesa mundana: placas esculpidas que cobrem todo o corpo com forro e cotas articuladas." },
 
   // Escudos
   { name: "Escudo", category: "Escudo", acFormula: "+2 CA", baseAC: 2, strReq: 0, stealthDisadv: false, cost: "10 po", weight: "3 kg", desc: "Escudo de madeira ou metal empunhado em uma das mãos, concedendo +2 na CA." }
+];
+
+export const BACKGROUNDS_DB = [
+  {
+    name: "Acólito",
+    desc: "Você viveu a serviço de um templo de um deus específico ou panteão de deuses celestiais. Você realiza ritos sagrados e conduz adorações.",
+    skills: "Intuição, Religião",
+    tools: "Nenhuma",
+    languages: "Dois idiomas à sua escolha",
+    equipment: "Um símbolo sagrado (amuleto ou relicário), um livro de preces ou roda de orações, 5 varetas de incenso, vestes comuns e uma algibeira com 15 po.",
+    feature: "Abrigo dos Fiéis: Como um acólito, você detém o respeito daqueles que compartilham de sua fé. Você e seus companheiros de aventura podem esperar receber cura e cuidados gratuitos em um templo, santuário ou outro local consagrado de sua fé."
+  },
+  {
+    name: "Artesão de Guilda",
+    desc: "Você é membro de uma guilda de artesãos, perito em um campo específico de trabalho manual e associado a outros artífices.",
+    skills: "Intuição, Persuasão",
+    tools: "Um tipo de ferramenta de artesão",
+    languages: "Um idioma à sua escolha",
+    equipment: "Um conjunto de ferramentas de artesão, uma carta de apresentação da sua guilda, roupas de viagem e uma algibeira com 15 po.",
+    feature: "Membro de Guilda: Como um membro estabelecido e respeitado de uma guilda, você usufrui dos benefícios que essa estrutura proporciona, incluindo hospedagem, proteção jurídica e apoio de seus companheiros artesãos."
+  },
+  {
+    name: "Artista",
+    desc: "Você prospera diante de uma plateia. Sabe como encantar, entreter e inspirar corações através da música, dança, teatro ou poesia.",
+    skills: "Acrobacia, Atuação",
+    tools: "Kit de disfarce, um tipo de instrumento musical",
+    languages: "Nenhum",
+    equipment: "Um instrumento musical à sua escolha, o favor de um admirador, uma fantasia e uma algibeira contendo 15 po.",
+    feature: "Pela Demanda Popular: Você sempre pode encontrar um lugar para se apresentar em tavernas ou estalagens. Em troca, você recebe alojamento e comida gratuitos de padrão modesto ou confortável."
+  },
+  {
+    name: "Charlatão",
+    desc: "Você sempre teve jeito com pessoas. Sabe o que elas querem, o que temem, e como entregar ilusões perfeitas para obter lucro.",
+    skills: "Enganação, Prestidigitação",
+    tools: "Kit de disfarce, kit de falsificação",
+    languages: "Nenhum",
+    equipment: "Um conjunto de roupas finas, um kit de disfarce, apetrechos para trapaças (dados viciados, cartas marcadas) e uma algibeira com 15 po.",
+    feature: "Identidade Falsa: Você criou uma segunda identidade estabelecida com documentos, conhecidos e disfarces completos para transitar sem ser descoberto."
+  },
+  {
+    name: "Criminoso",
+    desc: "Você é um criminoso experiente com histórico de quebrar a lei. Sobreviveu nas sombras das vielas urbanas através da astúcia.",
+    skills: "Enganação, Furtividade",
+    tools: "Um tipo de kit de jogo, ferramentas de ladrão",
+    languages: "Nenhum",
+    equipment: "Um pé de cabra, um conjunto de roupas escuras comuns com capuz e uma algibeira com 15 po.",
+    feature: "Contato Criminal: Você tem um contato confiável e de confiança que age como seu elo com uma rede de criminosos locais para troca de mensagens e contrabando."
+  },
+  {
+    name: "Eremita",
+    desc: "Você viveu em reclusão total durante um período formativo da sua vida, em retiro espiritual, contemplação da natureza ou isolamento.",
+    skills: "Medicina, Religião",
+    tools: "Kit de herbalismo",
+    languages: "Um idioma à sua escolha",
+    equipment: "Um estojo de pergaminho cheio de anotações e reflexões, um cobertor de inverno, um conjunto de roupas comuns, um kit de herbalismo e 5 po.",
+    feature: "Descoberta: A calma reclusão de seu longo eremitério lhe revelou uma verdade cósmica ou um grande segredo sobre o mundo, os deuses ou a história primordial."
+  },
+  {
+    name: "Forasteiro",
+    desc: "Você cresceu nos ermos, longe da civilização e do conforto dos vilarejos. Onde outros veem perigo, você vê comida e abrigo.",
+    skills: "Atletismo, Sobrevivência",
+    tools: "Um instrumento musical",
+    languages: "Um idioma à sua escolha",
+    equipment: "Um bordão, uma armadilha de caça, um troféu de um animal abatido, um conjunto de roupas de viagem e uma algibeira com 10 po.",
+    feature: "Andarilho: Você tem excelente memória para mapas e geografia dos terrenos. Além disso, pode encontrar água fresca e alimento para você e até outras cinco pessoas a cada dia."
+  },
+  {
+    name: "Herói do Povo",
+    desc: "Você veio de origens humildes entre os camponeses comuns, mas se ergueu para defendê-los contra uma ameaça monstruosa ou um tirano.",
+    skills: "Adestrar Animais, Sobrevivência",
+    tools: "Um tipo de ferramentas de artesão, veículos (terrestres)",
+    languages: "Nenhum",
+    equipment: "Um conjunto de ferramentas de artesão, uma pá, um pote de ferro, roupas comuns e uma algibeira com 10 po.",
+    feature: "Hospitalidade Rústica: Como você veio do povo, os plebeus e camponeses o acolhem de bom grado, oferecendo abrigo, comida e proteção contra nobres corruptos."
+  },
+  {
+    name: "Marinheiro",
+    desc: "Você serviu a bordo de uma embarcação por anos, enfrentando tempestades, monstros marinhos e os mistérios dos oceanos sem fim.",
+    skills: "Atletismo, Percepção",
+    tools: "Ferramentas de navegador, veículos (aquáticos)",
+    languages: "Nenhum",
+    equipment: "Uma malagueta (clava), 15 metros de corda de seda, um amuleto de sorte, roupas comuns e uma algibeira com 10 po.",
+    feature: "Passagem de Navio: Quando precisar viajar pelos mares, você pode conseguir passagem gratuita para você e seus companheiros de aventura em navios mercantes ou amigos."
+  },
+  {
+    name: "Nobre",
+    desc: "Você nasceu em berço de ouro, rodeado de privilégios, etiqueta e riqueza aristocrática, com laços familiares influentes nos palácios.",
+    skills: "História, Persuasão",
+    tools: "Um tipo de kit de jogos",
+    languages: "Um idioma à sua escolha",
+    equipment: "Um conjunto de roupas finas, um anel de sinete, um pergaminho com sua linhagem nobre e uma algibeira com 25 po.",
+    feature: "Posição Privilegiada: Graças à sua linhagem nobre, as pessoas comuns tendem a tratá-lo com deferência e você tem acesso imediato à nobreza e governantes locais."
+  },
+  {
+    name: "Órfão",
+    desc: "Você cresceu nas ruas sujas e perigosas de uma grande cidade, sozinho, sem pais nem teto, aprendendo a sobreviver de migalhas e astúcia.",
+    skills: "Furtividade, Prestidigitação",
+    tools: "Kit de disfarce, ferramentas de ladrão",
+    languages: "Nenhum",
+    equipment: "Uma faca pequena, um mapa da sua cidade natal, um pequeno rato de estimação, uma lembrança dos seus pais e uma bolsinha com 10 po.",
+    feature: "Segredos da Cidade: Você conhece os caminhos ocultos, becos escuros e passagens subterrâneas das cidades, permitindo mover-se entre dois pontos urbanos com o dobro da velocidade normal."
+  },
+  {
+    name: "Sábio",
+    desc: "Você passou anos de sua vida trancado em grandes bibliotecas, mosteiros e academias, estudando manuscritos antigos e teorias arcanas.",
+    skills: "Arcanismo, História",
+    tools: "Nenhuma",
+    languages: "Dois idiomas à sua escolha",
+    equipment: "Um vidro de tinta preta, uma pena, uma faquinha para aparar penas, uma carta com uma pergunta filosófica sem resposta, roupas comuns e 10 po.",
+    feature: "Pesquisador: Ao tentar obter ou lembrar um fragmento de informação que não conheça, você geralmente sabe onde e com quem pode encontrá-lo (biblioteca, erudito ou tomo)."
+  },
+  {
+    name: "Soldado",
+    desc: "A guerra e a vida militar moldaram você desde a juventude. Você marchou com um exército oficial ou com uma companhia mercenária de aço.",
+    skills: "Atletismo, Intimidação",
+    tools: "Um tipo de kit de jogos, veículos (terrestres)",
+    languages: "Nenhum",
+    equipment: "Uma insígnia de patente militar, um troféu de um inimigo abatido, um conjunto de dados ou baralho, roupas comuns e uma algibeira com 10 po.",
+    feature: "Patente Militar: Você tem uma patente de seus dias como soldado. Soldados leais ao seu antigo exército ainda reconhecem sua autoridade militar e civis o respeitam como protetor."
+  }
+];
+
+export const CORE_RULES_DB = [
+  {
+    name: "Descanso Curto (Short Rest)",
+    category: "Aventurando-se (Capítulo 8, Pág 188)",
+    desc: "Um descanso curto é um período de inatividade de pelo menos 1 hora, durante o qual o personagem não faz nada mais extenuante do que comer, beber, ler e cuidar de seus ferimentos.\n\nUm personagem pode gastar um ou mais Dados de Vida no final de um descanso curto, até o número máximo de Dados de Vida do personagem (que é igual ao nível do personagem). Para cada Dado de Vida gasto dessa forma, o jogador rola o dado e adiciona o modificador de Constituição do personagem a ele. O personagem recupera pontos de vida iguais ao total. O jogador pode decidir gastar um Dado de Vida adicional após cada rolagem."
+  },
+  {
+    name: "Descanso Longo (Long Rest)",
+    category: "Aventurando-se (Capítulo 8, Pág 188)",
+    desc: "Um descanso longo é um período de repouso prolongado, de pelo menos 8 horas, durante o qual o personagem dorme por pelo menos 6 horas e realiza apenas atividades leves (ler, conversar, comer ou ficar de vigia por no máximo 2 horas).\n\nNo final de um descanso longo, o personagem recupera TODOS os pontos de vida perdidos. O personagem também recupera Dados de Vida gastos, até um número igual à metade do total de Dados de Vida do personagem (mínimo de um dado).\n\nUm personagem não pode se beneficiar de mais de um descanso longo em um período de 24 horas, e deve ter pelo menos 1 ponto de vida no início do descanso para obter seus benefícios."
+  },
+  {
+    name: "Ações em Combate",
+    category: "Combate (Capítulo 9, Págs 194-195)",
+    desc: "No seu turno, você pode se mover e realizar UMA ação entre as opções canônicas:\n\n• Atacar: Realiza um ataque corpo a corpo ou à distância com arma (ou múltiplos se possuir Ataque Extra).\n• Conjurar uma Magia: Lança uma magia com tempo de conjuração de 1 ação.\n• Disparar (Dash): Ganha movimento adicional igual ao seu deslocamento para o turno atual.\n• Desengajar (Disengage): Seu movimento não provoca ataques de oportunidade até o fim do turno.\n• Esquivar (Dodge): Até o início do seu próximo turno, qualquer jogada de ataque contra você tem desvantagem e você tem vantagem em salvaguardas de Destreza.\n• Ajudar (Help): Concede vantagem ao próximo teste de um aliado ou ao próximo ataque contra um alvo a até 1,5m.\n• Esconder-se (Hide): Realiza teste de Furtividade para tentar sumir da percepção dos inimigos.\n• Preparar (Ready): Define um gatilho perceptível e uma ação para agir fora do seu turno gastando sua Reação.\n• Procurar (Search): Dedica o turno a encontrar algo com teste de Percepção ou Investigação.\n• Usar um Objeto: Interage com um mecanismo complexo ou bebe uma poção."
+  },
+  {
+    name: "Regras de Cobertura (Cover)",
+    category: "Combate (Capítulo 9, Pág 198)",
+    desc: "Obstáculos no campo de batalha fornecem proteção contra ataques e magias:\n\n• Meia Cobertura (+2 na CA e +2 salvaguardas de Destreza): Ocorre quando pelo menos metade do corpo do alvo está bloqueado (muretas baixas, árvores finas, outra criatura).\n• Três Quartos de Cobertura (+5 na CA e +5 salvaguardas de Destreza): Ocorre quando cerca de 75% do corpo está protegido (grades levadiças, fendas de flecheiro, troncos largos).\n• Cobertura Total: O alvo está 100% encoberto. Ele não pode ser mirado diretamente por ataques ou magias que requeiram linha de visão desimpedida."
+  },
+  {
+    name: "Salvaguardas Contra a Morte",
+    category: "Combate (Capítulo 9, Pág 199)",
+    desc: "Sempre que você começar seu turno com 0 pontos de vida, você deve rolar 1d20 puro sem somar modificadores:\n\n• 10 ou mais: Sucesso. Três sucessos estabilizam o personagem.\n• 9 ou menos: Falha. Três falhas resultam na morte permanente.\n• 1 Natural: Conta como DUAS falhas imediatas!\n• 20 Natural: Você recupera 1 PV instantaneamente e acorda consciente!\n• Sofrer Dano a 0 PV: Sofre 1 falha automática. Se for um acerto crítico, sofre 2 falhas!"
+  },
+  {
+    name: "Concentração em Magias",
+    category: "Conjuração (Capítulo 10, Pág 205)",
+    desc: "Algumas magias exigem concentração para permanecer ativas:\n\n• Limite de Uma Magia: Você só pode manter concentração em uma única magia por vez.\n• Sofrendo Dano: Sempre que sofrer dano enquanto concentrado, faça uma salvaguarda de Constituição (CD 10 ou metade do dano sofrido, o que for maior). Se falhar, a magia acaba.\n• Incapacitado: Cair a 0 PV ou ficar Incapacitado encerra a concentração imediatamente."
+  },
+  {
+    name: "Vantagem e Desvantagem",
+    category: "Utilizando Habilidades (Capítulo 7, Pág 175)",
+    desc: "Circunstâncias especiais podem conceder vantagem ou impor desvantagem numa jogada de d20:\n\n• Vantagem: Rola dois d20s e utiliza o MAIOR resultado.\n• Desvantagem: Rola dois d20s e utiliza o MENOR resultado.\n• Anulação Mútua: Se uma jogada tiver qualquer fonte de vantagem e qualquer fonte de desvantagem, elas se cancelam mutuamente, rolando apenas um d20 normal."
+  }
 ];
 
 export const SPELLS_DATABASE = [
@@ -87,7 +254,7 @@ export const SPELLS_DATABASE = [
   { name: "Escudo Arcano (Shield)", level: 1, school: "Abjuração", castingTime: "1 reação", range: "Pessoal", components: "V, S", duration: "1 rodada", desc: "Uma barreira invisível bloqueia ataques. Concede +5 de bônus na CA até o início do seu próximo turno, e você não sofre dano de Mísseis Mágicos." },
   { name: "Onda Trovejante (Thunderwave)", level: 1, school: "Evocação", castingTime: "1 ação", range: "Pessoal (cubo de 4,5m)", components: "V, S", duration: "Instantâneo", damage: "2d8 trovão", desc: "Uma onda de força trovejante irrompe de você. Criaturas no cubo sofrem 2d8 de trovão e são empurradas 3 metros em falha de Constituição." },
   { name: "Marca do Caçador (Hunter's Mark)", level: 1, school: "Adivinhação", castingTime: "1 ação bônus", range: "27 metros", components: "V", duration: "Concentração, até 1 hora", desc: "Você marca um alvo como sua presa. Você causa +1d6 de dano de arma contra ele sempre que acertar, e tem vantagem em testes para rastreá-lo." },
-  { name: "Fogo das Fadas (Faerie Fire)", level: 1, school: "Evocação", castingTime: "1 ação", range: "18 metros", components: "V", duration: "Concentração, até 1 minuto", desc: "Luz colorida contorna todos os objetos e criaturas num cubo de 6m. Ataques contra alvos afetados têm vantagem, e eles não se beneficiam de invisibilidade." },
+  { name: "Fogo das Fadas (Faerie Fire)", level: 1, school: "Evocação", castingTime: "1 ação", range: "18 metros", components: "V, S", duration: "Concentração, até 1 minuto", desc: "Luz colorida contorna todos os objetos e criaturas num cubo de 6m. Ataques contra alvos afetados têm vantagem, e eles não se beneficiam de invisibilidade." },
 
   // Nível 2
   { name: "Arma Espiritual (Spiritual Weapon)", level: 2, school: "Evocação", castingTime: "1 ação bônus", range: "18 metros", components: "V, S", duration: "1 minuto", damage: "1d8 + mod", desc: "Cria uma arma espectral flutuante que ataca inimigos usando ação bônus nos seus turnos subsequentes, causando 1d8 + modificador de conjuração." },
