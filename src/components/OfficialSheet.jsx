@@ -61,6 +61,7 @@ export default function OfficialSheet({
   const [isEditingEquipmentText, setIsEditingEquipmentText] = useState(false);
   const [isEditingProficienciesText, setIsEditingProficienciesText] = useState(false);
   const [isEditingFeaturesText, setIsEditingFeaturesText] = useState(false);
+  const [isEditingAttackNotes, setIsEditingAttackNotes] = useState(false);
 
   const parsedFeaturesList = useMemo(() => {
     return parseFeatures(character.featuresText);
@@ -105,6 +106,24 @@ export default function OfficialSheet({
   const handleAddEquipItem = () => {
     const next = [...parsedEquipList, { id: "eq-" + Date.now(), text: "Novo Item (1x)" }];
     setCharacter(prev => ({ ...prev, equipmentText: serializeEquipment(next) }));
+  };
+
+  const handleUpdateAttackNote = (idxToUpdate, newText) => {
+    const rawLines = character.attackNotes ? character.attackNotes.split("\n").filter(Boolean) : [];
+    rawLines[idxToUpdate] = newText;
+    setCharacter(prev => ({ ...prev, attackNotes: rawLines.join("\n") }));
+  };
+
+  const handleDeleteAttackNote = (idxToDelete) => {
+    const rawLines = character.attackNotes ? character.attackNotes.split("\n").filter(Boolean) : [];
+    const next = rawLines.filter((_, idx) => idx !== idxToDelete);
+    setCharacter(prev => ({ ...prev, attackNotes: next.join("\n") }));
+  };
+
+  const handleAddAttackNote = () => {
+    const rawLines = character.attackNotes ? character.attackNotes.split("\n").filter(Boolean) : [];
+    rawLines.push("Nova anotação de combate, magia ou munição");
+    setCharacter(prev => ({ ...prev, attackNotes: rawLines.join("\n") }));
   };
 
   // Manipuladores de Atributos
@@ -968,17 +987,90 @@ export default function OfficialSheet({
                   })}
                 </div>
 
-                {/* Bloco de Anotações de Combate sem Scrollbar */}
-                {character.attackNotes && (
-                  <div className="mt-1 p-1.5 bg-white border border-neutral-300 rounded text-[7px] text-neutral-700 leading-snug space-y-0.5 text-left">
-                    {character.attackNotes.split("\n").filter(Boolean).map((line, i) => (
-                      <div key={i} className="flex items-start gap-1">
-                        <span className="text-amber-600 text-[8px] leading-none">⚡</span>
-                        <span className="flex-1">{line.replace(/^[•\-\*]\s*/, "")}</span>
-                      </div>
-                    ))}
+                {/* Bloco de Anotações e Magias Totalmente Editável */}
+                <div className="mt-2 p-1.5 bg-neutral-100/90 border border-neutral-300 rounded-lg text-left shadow-xs">
+                  <div className="flex items-center justify-between mb-1 pb-1 border-b border-neutral-200">
+                    <span className="text-[6.5px] font-black uppercase text-amber-800 tracking-wider flex items-center gap-1">
+                      <span>⚡</span> Anotações de Combate & Magias
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingAttackNotes(!isEditingAttackNotes)}
+                      className="text-[6.5px] text-neutral-600 hover:text-neutral-950 font-bold flex items-center gap-0.5 bg-white px-1.5 py-0.5 rounded border border-neutral-300 shadow-xs hover:border-amber-400 transition-colors"
+                      title="Alternar entre modo de cards individuais e texto livre"
+                    >
+                      {isEditingAttackNotes ? (
+                        <>
+                          <Check size={7} className="text-emerald-600" />
+                          <span>Ver Banners</span>
+                        </>
+                      ) : (
+                        <>
+                          <Edit3 size={7} className="text-amber-700" />
+                          <span>Editar Texto</span>
+                        </>
+                      )}
+                    </button>
                   </div>
-                )}
+
+                  {isEditingAttackNotes ? (
+                    <div className="space-y-1">
+                      <textarea
+                        value={character.attackNotes || ""}
+                        onChange={(e) => setCharacter({ ...character, attackNotes: e.target.value })}
+                        rows={5}
+                        placeholder="Ex: CD Resistência de Magia: 13&#10;Bônus de Ataque Mágico: +5&#10;Munições: 20 flechas&#10;Machado Grande: Pesada, duas mãos."
+                        className="w-full text-[7.5px] leading-relaxed bg-white p-1.5 rounded border border-amber-300 focus:outline-none font-sans"
+                      />
+                      <p className="text-[6px] text-neutral-500 italic">
+                        Dica: Cada linha vira um banner interativo com botão de excluir e edição instantânea.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      {character.attackNotes && character.attackNotes.split("\n").filter(Boolean).length > 0 ? (
+                        character.attackNotes.split("\n").filter(Boolean).map((line, idx) => (
+                          <div 
+                            key={idx}
+                            className="flex items-center justify-between gap-1 p-1 rounded border border-neutral-200 bg-white hover:border-amber-400 group transition-all"
+                          >
+                            <span className="text-amber-600 text-[8px] leading-none select-none flex-shrink-0">⚡</span>
+                            <input
+                              type="text"
+                              value={line.replace(/^[•\-\*⚡]\s*/, "")}
+                              onChange={(e) => handleUpdateAttackNote(idx, e.target.value)}
+                              className="flex-1 min-w-0 text-[7.5px] text-neutral-800 bg-transparent focus:outline-none focus:bg-amber-50/60 rounded px-1 py-0.5 border-b border-transparent focus:border-amber-400 font-medium"
+                              placeholder="Anotação de combate, magia ou munição..."
+                              title="Clique para editar diretamente esta anotação"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteAttackNote(idx)}
+                              className="text-neutral-400 hover:text-red-600 transition-colors p-0.5 opacity-60 group-hover:opacity-100 flex-shrink-0"
+                              title="Excluir esta anotação"
+                            >
+                              <Trash2 size={8} />
+                            </button>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="text-center py-2 text-[7px] text-neutral-400 italic">
+                          Nenhuma anotação de combate. Clique abaixo para adicionar CDs de magia, munições ou observações.
+                        </div>
+                      )}
+
+                      <div className="pt-1 flex items-center justify-between border-t border-dashed border-neutral-200 mt-1">
+                        <button
+                          type="button"
+                          onClick={handleAddAttackNote}
+                          className="text-[7px] text-amber-700 hover:underline font-bold flex items-center gap-0.5"
+                        >
+                          <Plus size={8} /> Adicionar Anotação
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center justify-between border-t border-neutral-300 pt-0.5 mt-1">
