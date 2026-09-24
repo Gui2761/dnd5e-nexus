@@ -240,3 +240,183 @@ export function getSlotsForClassAndLevel(className, level, existingSlots = {}) {
 
   return newSlots;
 }
+
+// ============================================================================
+// MOTOR CANÔNICO DE MULTICLASSE (D&D 5ª EDIÇÃO - PHB CAPÍTULO 6)
+// ============================================================================
+
+export const MULTICLASS_PREREQUISITES = {
+  "Bárbaro": { label: "Força 13", check: (s) => (s?.str || 10) >= 13 },
+  "Bardo": { label: "Carisma 13", check: (s) => (s?.cha || 10) >= 13 },
+  "Bruxo": { label: "Carisma 13", check: (s) => (s?.cha || 10) >= 13 },
+  "Clérigo": { label: "Sabedoria 13", check: (s) => (s?.wis || 10) >= 13 },
+  "Druida": { label: "Sabedoria 13", check: (s) => (s?.wis || 10) >= 13 },
+  "Feiticeiro": { label: "Carisma 13", check: (s) => (s?.cha || 10) >= 13 },
+  "Guerreiro": { label: "Força 13 ou Destreza 13", check: (s) => (s?.str || 10) >= 13 || (s?.dex || 10) >= 13 },
+  "Ladino": { label: "Destreza 13", check: (s) => (s?.dex || 10) >= 13 },
+  "Mago": { label: "Inteligência 13", check: (s) => (s?.int || 10) >= 13 },
+  "Monge": { label: "Destreza 13 e Sabedoria 13", check: (s) => (s?.dex || 10) >= 13 && (s?.wis || 10) >= 13 },
+  "Paladino": { label: "Força 13 e Carisma 13", check: (s) => (s?.str || 10) >= 13 && (s?.cha || 10) >= 13 },
+  "Ranger": { label: "Destreza 13 e Sabedoria 13", check: (s) => (s?.dex || 10) >= 13 && (s?.wis || 10) >= 13 }
+};
+
+export const MULTICLASS_PROFICIENCIES = {
+  "Bárbaro": "Escudos, armas simples, armas marciais",
+  "Bardo": "Armadura leve, 1 perícia da lista, 1 instrumento musical",
+  "Bruxo": "Armadura leve, armas simples",
+  "Clérigo": "Armadura leve, armadura média, escudos",
+  "Druida": "Armadura leve, armadura média, escudos (sem metal)",
+  "Feiticeiro": "Nenhuma nova proficiência",
+  "Guerreiro": "Armadura leve, armadura média, escudos, armas simples, armas marciais",
+  "Ladino": "Armadura leve, 1 perícia da lista, ferramentas de ladrão",
+  "Mago": "Nenhuma nova proficiência",
+  "Monge": "Armas simples, espadas curtas",
+  "Paladino": "Armadura leve, armadura média, escudos, armas simples, armas marciais",
+  "Ranger": "Armadura leve, armadura média, escudos, armas simples, armas marciais, 1 perícia da lista"
+};
+
+// Tabela oficial de espaços de magia para conjurador multiclasse (PHB p. 167)
+export const MULTICLASS_SPELL_SLOTS_TABLE = {
+  1: { 1: 2 },
+  2: { 1: 3 },
+  3: { 1: 4, 2: 2 },
+  4: { 1: 4, 2: 3 },
+  5: { 1: 4, 2: 3, 3: 2 },
+  6: { 1: 4, 2: 3, 3: 3 },
+  7: { 1: 4, 2: 3, 3: 3, 4: 1 },
+  8: { 1: 4, 2: 3, 3: 3, 4: 2 },
+  9: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 1 },
+  10: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2 },
+  11: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1 },
+  12: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1 },
+  13: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1 },
+  14: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1 },
+  15: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1 },
+  16: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1 },
+  17: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 2, 6: 1, 7: 1, 8: 1, 9: 1 },
+  18: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 1, 7: 1, 8: 1, 9: 1 },
+  19: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 1, 8: 1, 9: 1 },
+  20: { 1: 4, 2: 3, 3: 3, 4: 3, 5: 3, 6: 2, 7: 2, 8: 1, 9: 1 }
+};
+
+export function checkMulticlassPrerequisites(className, stats) {
+  const prereq = MULTICLASS_PREREQUISITES[className];
+  if (!prereq) return { meets: true, label: "Sem pré-requisitos rígidos" };
+  const meets = prereq.check(stats);
+  return { meets, label: prereq.label };
+}
+
+export function calculateMulticlassHitDice(classList = []) {
+  if (!classList || classList.length === 0) return "1d8";
+  
+  const dieCounts = {};
+  classList.forEach(c => {
+    const die = CLASS_HIT_DICE[c.className] || "d8";
+    const lvl = Math.max(1, parseInt(c.level, 10) || 1);
+    dieCounts[die] = (dieCounts[die] || 0) + lvl;
+  });
+
+  const sortedDice = Object.keys(dieCounts).sort((a, b) => {
+    const numA = parseInt(a.replace("d", ""), 10);
+    const numB = parseInt(b.replace("d", ""), 10);
+    return numB - numA;
+  });
+
+  return sortedDice.map(die => `${dieCounts[die]}${die}`).join(" + ");
+}
+
+export function calculateMulticlassHP(classList = [], conScore = 10) {
+  if (!classList || classList.length === 0) return 10;
+  const conMod = getAbilityModifier(conScore);
+
+  let totalHP = 0;
+  classList.forEach((c, idx) => {
+    const lvl = Math.max(1, parseInt(c.level, 10) || 1);
+    const dieStr = CLASS_HIT_DICE[c.className] || "d8";
+    const dieMax = parseInt(dieStr.replace("d", ""), 10) || 8;
+    const dieAvg = Math.floor(dieMax / 2) + 1;
+
+    if (idx === 0) {
+      // 1ª Classe: Ganha dado máximo no 1º nível
+      const lvl1HP = Math.max(1, dieMax + conMod);
+      const otherLevelsHP = Math.max(0, (lvl - 1) * Math.max(1, dieAvg + conMod));
+      totalHP += lvl1HP + otherLevelsHP;
+    } else {
+      // Classes seguintes: Todos os níveis recebem a média arredondada
+      const allLevelsHP = lvl * Math.max(1, dieAvg + conMod);
+      totalHP += allLevelsHP;
+    }
+  });
+
+  return Math.max(1, totalHP);
+}
+
+export function calculateCombinedSpellSlots(classList = [], existingSlots = {}) {
+  if (!classList || classList.length === 0) return existingSlots;
+  if (classList.length === 1) {
+    return getSlotsForClassAndLevel(classList[0].className, classList[0].level, existingSlots);
+  }
+
+  const warlockEntry = classList.find(c => c.className === "Bruxo");
+  const nonWarlockCasters = classList.filter(c => c.className !== "Bruxo");
+
+  let totalCasterLevel = 0;
+  nonWarlockCasters.forEach(c => {
+    const lvl = parseInt(c.level, 10) || 1;
+    if (FULL_CASTER_CLASSES.includes(c.className)) {
+      totalCasterLevel += lvl;
+    } else if (HALF_CASTER_CLASSES.includes(c.className)) {
+      totalCasterLevel += Math.floor(lvl / 2);
+    }
+  });
+
+  const newSlots = { ...existingSlots };
+  for (let circle = 1; circle <= 9; circle++) {
+    newSlots[circle] = { total: 0, used: existingSlots[circle]?.used || 0 };
+  }
+
+  if (totalCasterLevel > 0) {
+    const cappedLvl = Math.min(20, Math.max(1, totalCasterLevel));
+    const table = MULTICLASS_SPELL_SLOTS_TABLE[cappedLvl] || {};
+    for (let circle = 1; circle <= 9; circle++) {
+      newSlots[circle].total = table[circle] || 0;
+    }
+  }
+
+  // Se tiver Bruxo, adiciona os espaços de Pacto ao círculo correspondente
+  if (warlockEntry) {
+    const wLvl = Math.min(20, Math.max(1, parseInt(warlockEntry.level, 10) || 1));
+    const wData = WARLOCK_SLOTS_TABLE[wLvl] || { slotCount: 1, slotLevel: 1 };
+    newSlots[wData.slotLevel] = {
+      total: (newSlots[wData.slotLevel]?.total || 0) + wData.slotCount,
+      used: newSlots[wData.slotLevel]?.used || 0,
+      pactSlots: wData.slotCount
+    };
+  }
+
+  return newSlots;
+}
+
+export function formatClassString(classList = []) {
+  if (!classList || classList.length === 0) return "Aventureiro";
+  if (classList.length === 1) return classList[0].className;
+  return classList.map(c => `${c.className} ${c.level}`).join(" / ");
+}
+
+export function parseClassString(str, totalLevel = 1) {
+  if (!str) return [{ className: "Guerreiro", level: totalLevel }];
+  if (str.includes("/")) {
+    const parts = str.split("/").map(s => s.trim());
+    const list = [];
+    parts.forEach(part => {
+      const match = part.match(/^([a-zA-ZÀ-ÿ\s]+?)\s*(\d+)?$/);
+      if (match) {
+        const cls = match[1].trim();
+        const lvl = parseInt(match[2], 10) || 1;
+        list.push({ className: cls, level: lvl });
+      }
+    });
+    if (list.length > 0) return list;
+  }
+  return [{ className: str.trim(), level: totalLevel }];
+}

@@ -2,7 +2,9 @@ import React, { useState, useMemo } from "react";
 import { 
   getAbilityModifier, formatModifier, getProficiencyBonus, 
   calculateCanonicalHP, XP_TABLE, getNextLevelXP, 
-  getSlotsForClassAndLevel, CLASS_HIT_DICE, ABILITIES, SKILLS 
+  getSlotsForClassAndLevel, CLASS_HIT_DICE, ABILITIES, SKILLS,
+  calculateMulticlassHitDice, calculateMulticlassHP, calculateCombinedSpellSlots,
+  formatClassString, parseClassString
 } from "../utils/dndCalc";
 import { WEAPONS, CLASS_FEATURES_DB, SPELLS_DATABASE } from "../data/compendium";
 import { Trash2, Plus, Sparkles, BookOpen, Edit3, Check, TrendingUp, Star } from "lucide-react";
@@ -134,17 +136,31 @@ export default function OfficialSheet({
 
   const handleLevelChange = (newLvl) => {
     const lvl = Math.min(20, Math.max(1, parseInt(newLvl, 10) || 1));
-    const className = character.className || "Guerreiro";
-    const hitDie = CLASS_HIT_DICE[className] || "d8";
-    const newHitDiceTotal = `${lvl}${hitDie}`;
-    const newHP = calculateCanonicalHP(className, lvl, character.stats?.con || 10);
+    const currentClasses = Array.isArray(character.classes) && character.classes.length > 0
+      ? character.classes.map(c => ({ ...c }))
+      : parseClassString(character.className, character.level || 1);
+
+    let updatedClasses = [...currentClasses];
+    if (updatedClasses.length > 1) {
+      const otherClassesSum = updatedClasses.slice(1).reduce((acc, c) => acc + (parseInt(c.level, 10) || 1), 0);
+      const newPrimaryLvl = Math.max(1, lvl - otherClassesSum);
+      updatedClasses[0] = { ...updatedClasses[0], level: newPrimaryLvl };
+    } else {
+      updatedClasses = [{ className: character.className || "Guerreiro", level: lvl }];
+    }
+
+    const newClassName = formatClassString(updatedClasses);
+    const newHitDiceTotal = calculateMulticlassHitDice(updatedClasses);
+    const newHP = calculateMulticlassHP(updatedClasses, character.stats?.con || 10);
     const minXP = XP_TABLE[lvl] || 0;
     const currentXP = character.xp || 0;
     const finalXP = currentXP < minXP ? minXP : currentXP;
-    const updatedSlots = getSlotsForClassAndLevel(className, lvl, character.spellcasting?.slots);
+    const updatedSlots = calculateCombinedSpellSlots(updatedClasses, character.spellcasting?.slots);
 
     setCharacter(prev => ({
       ...prev,
+      classes: updatedClasses,
+      className: newClassName,
       level: lvl,
       profBonusOverride: undefined, // Limpa override para que o recálculo canônico tome posse imediatamente!
       hitDiceTotal: newHitDiceTotal,
@@ -392,7 +408,7 @@ export default function OfficialSheet({
           {/* Lado Direito: Quadro de Informações do Personagem (2x3) */}
           <div 
             className="w-[500px] border-2 border-neutral-800 rounded-md p-2 bg-neutral-50 grid grid-rows-2 gap-x-3 gap-y-1"
-            style={{ gridTemplateColumns: "minmax(0, 1.25fr) minmax(0, 1fr) minmax(0, 1fr)" }}
+            style={{ gridTemplateColumns: "minmax(0, 1.45fr) minmax(0, 0.9fr) minmax(0, 0.9fr)" }}
           >
             {/* Classe e Nível Canônico com Espaço Completo */}
             <div className="flex flex-col justify-end border-b border-neutral-400 pb-0.5 min-w-0">
@@ -400,10 +416,22 @@ export default function OfficialSheet({
                 <input
                   type="text"
                   value={character.className}
-                  onChange={(e) => setCharacter({ ...character, className: e.target.value })}
-                  className="text-xs sm:text-[13px] font-black text-neutral-900 bg-transparent focus:outline-none flex-1 min-w-0"
-                  placeholder="Classe"
-                  title="Classe do Personagem (ex: Paladino, Guerreiro, Mago)"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const parsed = parseClassString(val, character.level || 1);
+                    setCharacter(prev => ({ 
+                      ...prev, 
+                      className: val,
+                      classes: parsed
+                    }));
+                  }}
+                  className={`font-black text-neutral-900 bg-transparent focus:outline-none flex-1 min-w-0 ${
+                    (character.className || "").length > 14 
+                      ? "text-[10px] sm:text-[10.5px] tracking-tight" 
+                      : "text-xs sm:text-[13px]"
+                  }`}
+                  placeholder="Classe (ex: Paladino 3 / Bruxo 2)"
+                  title="Classe do Personagem — suporta multiclasse como 'Paladino 3 / Bruxo 2'"
                 />
                 
                 {/* Seletor Compacto e Elegante de Nível */}
@@ -857,7 +885,8 @@ export default function OfficialSheet({
                     type="text"
                     value={character.hitDiceTotal}
                     onChange={(e) => setCharacter({ ...character, hitDiceTotal: e.target.value })}
-                    className="w-12 text-right font-bold text-neutral-800 bg-transparent focus:outline-none font-mono"
+                    className="w-20 text-right font-bold text-neutral-800 bg-transparent focus:outline-none font-mono text-[8px]"
+                    title="Poço total de dados de vida (ex: 3d10 + 2d8)"
                   />
                 </div>
                 <input
