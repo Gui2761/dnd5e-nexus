@@ -569,13 +569,13 @@ export default function OfficialSheet({
                 </table>
 
                 {/* Bloco de Anotações de Ataques */}
-                <div className="mt-1.5 p-1 bg-white border border-neutral-300 rounded text-[7.5px] leading-relaxed text-neutral-800">
-                  <div className="font-semibold text-neutral-600 mb-0.5">Anotações de Combate & Magias:</div>
-                  <div>• CD Resistência de Magia: 13 (8 + 2 Prof + 3 Car)</div>
-                  <div>• Bônus de Ataque Mágico: +5</div>
-                  <div>• Machado Grande: Pesada, duas mãos.</div>
-                  <div>• Azagaias: Arremesso (9m / 36m).</div>
-                  <div>• Cota de Malha: CA fixa 16 (desvantagem em Furtividade).</div>
+                <div className="mt-1 p-1 bg-white border border-neutral-300 rounded">
+                  <textarea
+                    value={character.attackNotes || "• CD Resistência de Magia: 13 (8 + 2 Prof + 3 Car)\n• Bônus de Ataque Mágico: +5\n• Machado Grande: Pesada, duas mãos.\n• Azagaias: Arremesso (9m / 36m).\n• Cota de Malha: CA fixa 16 (desvantagem em Furtividade)."}
+                    onChange={(e) => setCharacter({ ...character, attackNotes: e.target.value })}
+                    rows={4}
+                    className="w-full bg-transparent border-none focus:outline-none resize-none text-[7.5px] leading-tight font-sans text-neutral-800"
+                  />
                 </div>
               </div>
 

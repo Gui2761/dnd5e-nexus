@@ -26,8 +26,8 @@ export default function App() {
         const fromUrl = decompressCharacterFromUrl(sheetParam);
         if (fromUrl) return fromUrl;
       }
-      // 2. Tenta carregar do localStorage
-      const saved = localStorage.getItem("dnd5e_nexus_character");
+      // 2. Tenta carregar do localStorage com chave v3
+      const saved = localStorage.getItem("dnd5e_nexus_character_v3");
       if (saved) {
         try {
           return JSON.parse(saved);
@@ -69,7 +69,7 @@ export default function App() {
   // Salva no localStorage e atualiza título
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("dnd5e_nexus_character", JSON.stringify(character));
+      localStorage.setItem("dnd5e_nexus_character_v3", JSON.stringify(character));
       document.title = `${character.name || "Personagem"} — D&D 5e Oficial`;
     }
   }, [character]);
@@ -161,6 +161,19 @@ export default function App() {
                 <span className="hidden sm:inline">Modo Tático</span>
               </button>
             </div>
+
+            {/* Botão de Restaurar Ficha do Thokk */}
+            <button
+              onClick={() => {
+                if (confirm("Deseja carregar a ficha original do Thokk Lâmina-Partida com todos os atributos oficiais?")) {
+                  setCharacter(DEFAULT_CHARACTER);
+                }
+              }}
+              className="px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 transition-all flex items-center gap-1 shadow-sm"
+              title="Carregar a ficha canônica do Thokk Lâmina-Partida"
+            >
+              <span>⚔️ Ficha do Thokk</span>
+            </button>
           </div>
 
           {/* Centro: Controles de Zoom da Ficha Oficial */}
