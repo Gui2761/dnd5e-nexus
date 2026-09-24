@@ -472,81 +472,42 @@ export const CLASS_DATA = {
 };
 
 /**
- * Cria uma ficha 100% LIMPA e Nova, aplicando automaticamente as regras de Raça e Classe do D&D 5e
+ * Cria uma ficha 100% LIMPA e EM BRANCO conforme solicitado pelo usuário.
+ * Define apenas: Nome, Raça, Classe, Nome do Jogador e Nível.
+ * Todos os outros atributos, PV, perícias, magias, equipamentos e características
+ * começam vazios para que o próprio jogador preencha tudo sozinho.
  */
 export function createCleanCharacter({ name, race = "Humano", className = "Guerreiro", level = 1, playerName = "" }) {
-  const rData = RACE_DATA[race] || RACE_DATA["Humano"];
-  const cData = CLASS_DATA[className] || CLASS_DATA["Guerreiro"];
-
-  // Atributos base equilibrados (14, 12, 13, 10, 10, 10 padrão)
-  const baseScores = {
-    str: 14,
-    dex: 12,
-    con: 13,
-    int: 10,
-    wis: 10,
-    cha: 10
-  };
-
-  // Se classe for Mago, prioriza INT; se Ladino, prioriza DES; se Bárbaro/Paladino, prioriza FOR; etc.
-  if (className === "Mago") {
-    baseScores.int = 14; baseScores.str = 10;
-  } else if (className === "Ladino" || className === "Ranger" || className === "Monge") {
-    baseScores.dex = 14; baseScores.str = 10;
-  } else if (className === "Clérigo" || className === "Druida") {
-    baseScores.wis = 14; baseScores.str = 10;
-  } else if (className === "Bardo" || className === "Bruxo" || className === "Feiticeiro") {
-    baseScores.cha = 14; baseScores.str = 10;
-  }
-
-  // Soma bônus racial
-  const finalStats = {
-    str: baseScores.str + (rData.statsBonus?.str || 0),
-    dex: baseScores.dex + (rData.statsBonus?.dex || 0),
-    con: baseScores.con + (rData.statsBonus?.con || 0),
-    int: baseScores.int + (rData.statsBonus?.int || 0),
-    wis: baseScores.wis + (rData.statsBonus?.wis || 0),
-    cha: baseScores.cha + (rData.statsBonus?.cha || 0)
-  };
-
-  const conMod = Math.floor((finalStats.con - 10) / 2);
-  const dexMod = Math.floor((finalStats.dex - 10) / 2);
-
-  // PVs no nível 1: Dado cheio + CON
-  const hpBase = cData.hitDieSides + conMod;
-  const hpPerLevel = Math.floor(cData.hitDieSides / 2) + 1 + conMod;
-  const hpTotal = Math.max(1, hpBase + (Math.max(1, level) - 1) * hpPerLevel);
-
-  // Características formatadas em texto com marcadores
-  let featuresText = `• HERANÇA RACIAL: ${race.toUpperCase()}\n`;
-  rData.traits.forEach(t => {
-    featuresText += `\n• ${t.name} (Racial)\n${t.desc}\n`;
-  });
-
-  featuresText += `\n• VOCAÇÃO DE CLASSE: ${className.toUpperCase()}\n`;
-  cData.features.forEach(f => {
-    featuresText += `\n• ${f.name} (${className} 1)\n${f.desc}\n`;
-  });
-
-  // Idiomas e outras proficiências
-  const profLanguages = rData.languages.join(", ");
-  const otherProf = `• Idiomas: ${profLanguages}\n• Armaduras: Proficiência de ${className}\n• Armas: Proficiência marcial/simples de ${className}`;
-
   return {
     id: "char_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7),
     name: name.trim(),
-    className,
+    className: className || "Guerreiro",
     level: Number(level) || 1,
-    background: "Aventureiro",
-    playerName: playerName.trim() || "Aventureiro",
-    race,
-    alignment: "Neutro",
+    background: "",
+    playerName: playerName.trim() || "",
+    race: race || "Humano",
+    alignment: "",
     xp: 0,
 
-    stats: finalStats,
+    // Atributos base neutros 10 (+0), permitindo o jogador preencher seus dados rolados
+    stats: {
+      str: 10,
+      dex: 10,
+      con: 10,
+      int: 10,
+      wis: 10,
+      cha: 10
+    },
     inspiration: false,
     profBonusOverride: undefined,
-    savingProficiencies: { ...cData.savingProficiencies },
+    savingProficiencies: {
+      str: false,
+      dex: false,
+      con: false,
+      int: false,
+      wis: false,
+      cha: false
+    },
     skillsProficiencies: {
       acrobatics: false,
       animalHandling: false,
@@ -555,11 +516,11 @@ export function createCleanCharacter({ name, race = "Humano", className = "Guerr
       deception: false,
       history: false,
       insight: false,
-      intimidation: Boolean(rData.skillProficiencies?.intimidation),
+      intimidation: false,
       investigation: false,
       medicine: false,
       nature: false,
-      perception: Boolean(rData.skillProficiencies?.perception),
+      perception: false,
       performance: false,
       persuasion: false,
       religion: false,
@@ -569,34 +530,34 @@ export function createCleanCharacter({ name, race = "Humano", className = "Guerr
     },
     passivePerceptionOverride: undefined,
 
-    armorClass: cData.baseAC || (10 + dexMod),
-    initiativeBonus: dexMod,
-    speed: rData.speed || "9m",
-    hpMax: hpTotal,
-    hpCurrent: hpTotal,
+    armorClass: 10,
+    initiativeBonus: 0,
+    speed: "",
+    hpMax: 0,
+    hpCurrent: 0,
     hpTemp: 0,
-    hitDiceTotal: `${level}${cData.hitDie.replace(/^\d+/, "")}`,
-    hitDiceCurrent: `${level}${cData.hitDie.replace(/^\d+/, "")}`,
+    hitDiceTotal: "",
+    hitDiceCurrent: "",
     deathSaves: { successes: 0, failures: 0 },
 
+    // Um ataque em branco pronto para ser pesquisado/preenchido
     attacks: [
       {
         id: "atk-" + Date.now(),
-        name: cData.starterAttack.name,
-        bonus: cData.starterAttack.bonus,
-        damage: cData.starterAttack.damage,
-        notes: cData.starterAttack.notes
+        name: "",
+        bonus: "",
+        damage: "",
+        notes: ""
       }
     ],
-    attackNotes: `• Dado de Vida: ${cData.hitDie}\n• Deslocamento Base: ${rData.speed}\n• Sentidos: ${rData.senses}`,
+    attackNotes: "",
 
-    coins: { cp: 0, sp: 0, ep: 0, gp: 10, pp: 0 },
-    equipmentText: cData.starterEquipment,
-    otherProficiencies: otherProf,
+    coins: { cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
+    equipmentText: "",
+    otherProficiencies: "",
 
-    featuresText: featuresText.trim(),
+    featuresText: "",
 
-    // Campos de personalidade começam em branco para o jogador personalizar
     personality: {
       traits: "",
       ideals: "",
@@ -605,10 +566,10 @@ export function createCleanCharacter({ name, race = "Humano", className = "Guerr
     },
 
     spellcasting: {
-      spellClass: className,
-      spellAbility: className === "Mago" ? "int" : (className === "Clérigo" || className === "Druida" || className === "Ranger") ? "wis" : "cha",
-      spellSaveDC: 8 + 2 + (className === "Mago" ? Math.floor((finalStats.int - 10) / 2) : 2),
-      spellAttackBonus: 2 + (className === "Mago" ? Math.floor((finalStats.int - 10) / 2) : 2),
+      spellClass: className || "Guerreiro",
+      spellAbility: "int",
+      spellSaveDC: 10,
+      spellAttackBonus: 2,
       spells: []
     }
   };

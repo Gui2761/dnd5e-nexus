@@ -102,12 +102,22 @@ export default function OfficialSheet({
 
   // Manipuladores de Atributos
   const handleScoreChange = (abId, val) => {
+    if (val === "" || val === undefined) {
+      setCharacter(prev => ({
+        ...prev,
+        stats: {
+          ...prev.stats,
+          [abId]: ""
+        }
+      }));
+      return;
+    }
     const num = parseInt(val, 10);
     setCharacter(prev => ({
       ...prev,
       stats: {
         ...prev.stats,
-        [abId]: isNaN(num) ? 10 : num
+        [abId]: isNaN(num) ? "" : num
       }
     }));
   };
@@ -202,27 +212,30 @@ export default function OfficialSheet({
   };
 
   const handleSelectWeaponForAttack = (atkId, weapon) => {
-    const strMod = getAbilityModifier(character.stats.str);
-    const bonusVal = `+${profBonus + strMod}`;
-    const damageVal = `${weapon.damage} + ${strMod} ${weapon.damageType}`;
+    const strMod = getAbilityModifier(character.stats?.str || 10);
+    const dexMod = getAbilityModifier(character.stats?.dex || 10);
+    const props = (weapon.properties || "").toLowerCase();
+    const isFinesse = props.includes("acuidade");
+    const isRanged = (weapon.type || "").toLowerCase().includes("distância") || props.includes("munição");
     
-    setCharacter(prev => {
-      let notes = prev.attackNotes || "";
-      if (weapon.properties && !notes.includes(weapon.name)) {
-        notes += `\n• ${weapon.name}: ${weapon.properties}`;
-      }
-      return {
-        ...prev,
-        attacks: prev.attacks.map(a => a.id === atkId ? {
-          ...a,
-          name: weapon.name,
-          bonus: bonusVal,
-          damage: damageVal,
-          notes: weapon.properties
-        } : a),
-        attackNotes: notes.trim()
-      };
-    });
+    // Armas com acuidade usam FOR ou DES (o que for maior). Armas à distância usam DES. Demais usam FOR.
+    const attackMod = isRanged ? dexMod : (isFinesse ? Math.max(strMod, dexMod) : strMod);
+    const totalBonus = profBonus + attackMod;
+    const bonusVal = totalBonus >= 0 ? `+${totalBonus}` : `${totalBonus}`;
+    
+    const damageModStr = attackMod !== 0 ? (attackMod > 0 ? ` + ${attackMod}` : ` - ${Math.abs(attackMod)}`) : "";
+    const damageVal = `${weapon.damage}${damageModStr} ${weapon.damageType || ""}`.trim();
+    
+    setCharacter(prev => ({
+      ...prev,
+      attacks: prev.attacks.map(a => a.id === atkId ? {
+        ...a,
+        name: weapon.name,
+        bonus: bonusVal,
+        damage: damageVal,
+        notes: weapon.properties || ""
+      } : a)
+    }));
     setActiveWeaponSearchRowId(null);
   };
 
@@ -238,14 +251,25 @@ export default function OfficialSheet({
   };
 
   // Percepção Passiva
-  const wisMod = getAbilityModifier(character.stats.wis);
-  const isPrcProf = character.skillsProficiencies.perception;
+  const wisMod = getAbilityModifier(character.stats?.wis || 10);
+  const isPrcProf = character.skillsProficiencies?.perception;
   const passivePerception = 10 + wisMod + (isPrcProf ? profBonus : 0);
 
-  // Filtro de armas para autocompletar
-  const filteredWeapons = weaponSearchQuery.trim()
-    ? WEAPONS.filter(w => w.name.toLowerCase().includes(weaponSearchQuery.toLowerCase())).slice(0, 5)
-    : [];
+  // Filtro inteligente de armas do compêndio
+  const filteredWeapons = useMemo(() => {
+    const q = (weaponSearchQuery || "").trim().toLowerCase();
+    const norm = str => str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    if (!q) {
+      return WEAPONS.slice(0, 7);
+    }
+    const queryNorm = norm(q);
+    return WEAPONS.filter(w => {
+      const nameNorm = norm(w.name);
+      const propsNorm = norm(w.properties || "");
+      const typeNorm = norm(w.type || "");
+      return nameNorm.includes(queryNorm) || propsNorm.includes(queryNorm) || typeNorm.includes(queryNorm);
+    }).slice(0, 10);
+  }, [weaponSearchQuery]);
 
   // Filtro de habilidades para autocompletar
   const allFeatures = [];
@@ -784,40 +808,21 @@ export default function OfficialSheet({
             {/* Tabela de Ataques e Magias com Banners Estilizados */}
             <div className="border-[1.5px] border-neutral-800 rounded-lg p-2 bg-neutral-50 flex flex-col justify-between h-auto min-h-[185px] overflow-visible relative">
               <div className="w-full min-w-0">
-                {/* Autocomplete de Armas do Livro */}
-                {activeWeaponSearchRowId && filteredWeapons.length > 0 && (
-                  <div className="absolute left-2 right-2 top-10 bg-neutral-900 text-white rounded-xl shadow-2xl border border-amber-400 z-30 p-1.5 text-[8px] max-h-44 overflow-y-auto">
-                    <span className="text-[6.5px] text-amber-300 font-bold block mb-1 uppercase tracking-wider">
-                      Sugestões do Livro de Regras:
-                    </span>
-                    {filteredWeapons.map((wpn, idx) => (
-                      <div
-                        key={idx}
-                        onClick={() => handleSelectWeaponForAttack(activeWeaponSearchRowId, wpn)}
-                        className="p-1 hover:bg-neutral-800 cursor-pointer rounded flex justify-between items-center"
-                      >
-                        <span className="font-bold text-amber-200">{wpn.name}</span>
-                        <span className="text-red-300 font-mono">{wpn.damage} {wpn.damageType}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
                 {/* Lista de Banners de Ataque */}
                 <div className="space-y-1.5 mb-2 w-full min-w-0">
                   {character.attacks.map(atk => {
                     const isAxe = atk.name.toLowerCase().includes("machado");
-                    const isRanged = atk.name.toLowerCase().includes("azagaia") || atk.name.toLowerCase().includes("arco");
-                    const isSword = atk.name.toLowerCase().includes("espada") || atk.name.toLowerCase().includes("lâmina");
+                    const isRanged = atk.name.toLowerCase().includes("azagaia") || atk.name.toLowerCase().includes("arco") || atk.name.toLowerCase().includes("besta") || atk.name.toLowerCase().includes("dardo");
+                    const isSword = atk.name.toLowerCase().includes("espada") || atk.name.toLowerCase().includes("lâmina") || atk.name.toLowerCase().includes("rapieira") || atk.name.toLowerCase().includes("cimitarra");
 
                     return (
                       <div 
                         key={atk.id}
-                        className="rounded-lg border border-neutral-300 bg-gradient-to-r from-red-50/70 via-white to-amber-50/50 p-1.5 shadow-sm hover:border-red-400 transition-all w-full min-w-0 box-border text-left"
+                        className="rounded-lg border border-neutral-300 bg-gradient-to-r from-red-50/70 via-white to-amber-50/50 p-1.5 shadow-sm hover:border-red-400 transition-all w-full min-w-0 box-border text-left relative"
                       >
                         {/* Linha Superior: Ícone, Nome e Excluir */}
                         <div className="flex items-center justify-between gap-1 mb-1">
-                          <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 min-w-0 flex-1 relative">
                             <span className="text-[10px] select-none">
                               {isAxe ? "🪓" : isRanged ? "🎯" : isSword ? "⚔️" : "🗡️"}
                             </span>
@@ -825,17 +830,62 @@ export default function OfficialSheet({
                               type="text"
                               value={atk.name}
                               onChange={(e) => {
-                                handleAttackChange(atk.id, "name", e.target.value);
-                                setWeaponSearchQuery(e.target.value);
+                                const val = e.target.value;
+                                handleAttackChange(atk.id, "name", val);
+                                setWeaponSearchQuery(val);
                                 setActiveWeaponSearchRowId(atk.id);
+                                const exact = WEAPONS.find(w => w.name.toLowerCase() === val.trim().toLowerCase());
+                                if (exact) {
+                                  handleSelectWeaponForAttack(atk.id, exact);
+                                }
                               }}
                               onFocus={() => {
-                                setWeaponSearchQuery(atk.name);
+                                setWeaponSearchQuery(atk.name || "");
                                 setActiveWeaponSearchRowId(atk.id);
                               }}
-                              className="font-serif font-black text-[9px] text-neutral-900 bg-transparent focus:outline-none w-full truncate"
-                              placeholder="Nome da Arma"
+                              className="font-serif font-black text-[9px] text-neutral-900 bg-transparent focus:outline-none w-full truncate border-b border-transparent focus:border-amber-400"
+                              placeholder="Digite a arma (ex: Espada Longa, Machado...)"
                             />
+
+                            {/* Dropdown de Autocomplete Inteligente do Livro */}
+                            {activeWeaponSearchRowId === atk.id && filteredWeapons.length > 0 && (
+                              <div 
+                                className="absolute left-0 top-full mt-1 w-64 bg-neutral-950 text-white rounded-xl shadow-2xl border-2 border-amber-400 z-50 p-1.5 text-[8px] max-h-48 overflow-y-auto"
+                                onMouseDown={(e) => e.preventDefault()}
+                              >
+                                <div className="flex items-center justify-between pb-1 mb-1 border-b border-white/10 text-[7px] text-amber-300 font-bold uppercase tracking-wider">
+                                  <span>📖 Sugestões de Armas (D&D 5e):</span>
+                                  <button 
+                                    type="button" 
+                                    onClick={() => setActiveWeaponSearchRowId(null)}
+                                    className="text-white/50 hover:text-white px-1"
+                                  >
+                                    ✕
+                                  </button>
+                                </div>
+                                <div className="space-y-1">
+                                  {filteredWeapons.map((wpn, idx) => (
+                                    <div
+                                      key={idx}
+                                      onClick={() => handleSelectWeaponForAttack(atk.id, wpn)}
+                                      className="p-1.5 hover:bg-neutral-800 rounded-lg cursor-pointer transition-colors border border-transparent hover:border-amber-400/50"
+                                    >
+                                      <div className="flex justify-between items-center gap-1">
+                                        <span className="font-bold text-amber-300 text-[8.5px]">{wpn.name}</span>
+                                        <span className="text-red-400 font-mono font-bold text-[8px] bg-red-950/60 px-1 py-0.5 rounded border border-red-800/40">
+                                          {wpn.damage} {wpn.damageType}
+                                        </span>
+                                      </div>
+                                      {wpn.properties && (
+                                        <div className="text-[6.5px] text-white/60 italic truncate mt-0.5">
+                                          {wpn.properties}
+                                        </div>
+                                      )}
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
 
                           <button
